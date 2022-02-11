@@ -42,7 +42,6 @@
   },
   "scripts": {
     "postinstall": "gulp default",
-    "build": "gulp default",
-    "test": "node node_modules/mocha/bin/mocha --exit"
+    "build": "gulp default"
   }
 }
