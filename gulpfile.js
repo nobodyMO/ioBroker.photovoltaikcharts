@@ -52,9 +52,9 @@ gulp.task('copyHighchartsjs', () => {
         './node_modules/highcharts/highstock.js','./node_modules/highcharts/highstock.js.map','./node_modules/highcharts/highstock.src.js',
         './node_modules/highcharts/modules/drag-panes.js','./node_modules/highcharts/modules/drag-panes.js.map'		
 		
-    ])
+    ],{"allowEmpty": true})
         .pipe(gulp.dest('./widgets/photovoltaikchartWidget/js'));
-},{"allowEmpty": true});
+});
 
 gulp.task('copyHighchartsjs2', () => {
     return gulp.src([
@@ -68,9 +68,9 @@ gulp.task('copyHighchartsjs2', () => {
         '../highcharts/highstock.js','../highcharts/highstock.js.map','../highcharts/highstock.src.js',
         '../highcharts/modules/drag-panes.js','../highcharts/modules/drag-panes.js.map'		
 		
-    ])
+    ],{"allowEmpty": true})
         .pipe(gulp.dest('./widgets/photovoltaikchartWidget/js'));
-},{"allowEmpty": true});
+});
 
 
 gulp.task('copyCSS', () => {
