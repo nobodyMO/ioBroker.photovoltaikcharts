@@ -54,19 +54,29 @@ gulp.task('copyHighchartsjs', () => {
 		
     ])
         .pipe(gulp.dest('./widgets/photovoltaikchartWidget/js'));
-});
+},{"allowEmpty": true});
 
-gulp.task('copyHighchartscss', () => {
+gulp.task('copyHighchartsjs2', () => {
     return gulp.src([
-        './node_modules/highcharts/css/highcharts.css'
+        '../highcharts/highcharts.js','..highcharts/highcharts.js.map', '../highcharts/highcharts.src.js',
+		'../highcharts/highcharts-3d.js','../highcharts/highcharts-3d.js.map','../highcharts/highcharts-3d.src.js',
+		'../highcharts/modules/boost.js','../highcharts/modules/boost.js.map','../highcharts/modules/boost.src.js',
+		'../highcharts/modules/exporting.js','../highcharts/modules/exporting.js.map','../highcharts/modules/exporting.src.js',
+		'../highcharts/modules/export-data.js','../highcharts/modules/export-data.js.map','../highcharts/modules/export-data.src.js',
+		'../highcharts/modules/offline-exporting.js','../highcharts/modules/offline-exporting.js.map','../highcharts/modules/offline-exporting.src.js',
+		'../highcharts/modules/full-screen.js','../highcharts/modules/full-screen.js.map','../highcharts/modules/full-screen.src.js',
+        '../highcharts/highstock.js','../highcharts/highstock.js.map','../highcharts/highstock.src.js',
+        '../highcharts/modules/drag-panes.js','../highcharts/modules/drag-panes.js.map'		
+		
     ])
-        .pipe(gulp.dest('./widgets/photovoltaikchartWidget/css'));
-});
+        .pipe(gulp.dest('./widgets/photovoltaikchartWidget/js'));
+},{"allowEmpty": true});
+
 
 gulp.task('copyCSS', () => {
     return gulp.src([
         './src//css//styles.css'
-    ])
+    ], {"allowEmpty": true})
         .pipe(gulp.dest('./widgets/photovoltaikchartWidget/css'));
 });
 
@@ -77,71 +87,7 @@ gulp.task('copyImg', () => {
         .pipe(gulp.dest('./widgets/photovoltaikchartWidget/img'));
 });
 
-gulp.task('translate', async function (done) {
 
-    let yandex;
-    const i = process.argv.indexOf("--yandex");
-    if (i > -1) {
-        yandex = process.argv[i + 1];
-    }
-    
-    if (iopackage && iopackage.common) {
-        if (iopackage.common.news) {
-            console.log("Translate News");
-            for (let k in iopackage.common.news) {
-                console.log("News: " + k);
-                let nw = iopackage.common.news[k];
-                await translateNotExisting(nw, null, yandex);
-            }
-        }
-        if (iopackage.common.titleLang) {
-            console.log("Translate Title");
-            await translateNotExisting(iopackage.common.titleLang, iopackage.common.title, yandex);
-        }
-        if (iopackage.common.desc) {
-            console.log("Translate Description");
-            await translateNotExisting(iopackage.common.desc, null, yandex);
-        }
 
-        if (fs.existsSync('./src/i18n/en/translations.json')) {
-            let enTranslations = require('./src/i18n/en/translations.json');
-            for (let l in languages) {
-                console.log("Translate Text: " + l);
-                let existing = {};
-                if (fs.existsSync('./src/i18n/' + l + '/translations.json')) {
-                    existing = require('./src/i18n/' + l + '/translations.json');
-                }
-                for (let t in enTranslations) {
-                    if (!existing[t]) {
-                        existing[t] = await translate(enTranslations[t], l, yandex);
-                    }
-                }
-                if (!fs.existsSync('./src/i18n/' + l + '/')) {
-                    fs.mkdirSync('./src/i18n/' + l + '/');
-                }
-                fs.writeFileSync('./src/i18n/' + l + '/translations.json', JSON.stringify(existing, null, 4));
-            }
-        }
 
-    }
-    fs.writeFileSync('io-package.json', JSON.stringify(iopackage, null, 4));
-});
-
-async function translateNotExisting(obj, baseText, yandex) {
-    let t = obj['en'];
-    if (!t) {
-        t = baseText;
-    }
-
-    if (t) {
-        for (let l in languages) {
-            if (!obj[l]) {                
-                const time = new Date().getTime();
-                obj[l] = await translate(t, l, yandex);
-                console.log("en -> " + l + " " + (new Date().getTime() - time) + " ms");
-            }
-        }
-    }
-}
-
-gulp.task('default', gulp.series('photovoltaikChart', 'copyHighchartsjs', 'photovoltaikchartHTML', 'copyHighchartscss', 'copyCSS', 'copyImg'));
+gulp.task('default', gulp.series('photovoltaikChart', 'copyHighchartsjs', 'copyHighchartsjs2','photovoltaikchartHTML', 'copyCSS', 'copyImg'));
