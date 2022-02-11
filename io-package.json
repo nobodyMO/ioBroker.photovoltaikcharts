@@ -17,7 +17,7 @@
     "authors": [
       "Markus Korporal <markus@korporal>"
     ],
-    "license": "https://www.highcharts.com/license",
+    "license": "CC BY-NC",
     "platform": "javascript/Node.js",
     "icon": "photovoltaikcharts.png",
     "mode": "none",
