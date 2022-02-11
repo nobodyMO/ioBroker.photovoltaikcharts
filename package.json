@@ -41,7 +41,7 @@
     "url": "git+https://github.com/nobodyMO/ioBroker.photovoltaikcharts.git"
   },
   "scripts": {
-    "install": "node node_modules/gulp/bin/gulp default",
+    "postinstall": "node node_modules/gulp/bin/gulp default",
     "test": "node node_modules/mocha/bin/mocha --exit"
   }
 }
