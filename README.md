@@ -88,7 +88,7 @@ The widgets works perfect in my self compiled version of the iobroker cordova ap
 However, due to licensing restrictions on the commercial use of highcharts, it is unlikely that this adapter will be included in the official Android app. 
 
 ## License
-This adapter based on highcharts and highstock. These are commercial products, which requere to obain a appropriate licence. Please check https://www.highcharts.com/license for licensing.
+This adapter based on highcharts and highstock. These are commercial products, which require to obain a appropriate licence. Please check https://www.highcharts.com/license for licensing.
 Non commercial use of highcharts and highstock is currently free under a Creative Commons (CC) Attribution-Non-Commercial license.
 
 During the installation of this adapter the npm package highcharts will automaticaly downloaded and the required files are copied to the widget directory.
