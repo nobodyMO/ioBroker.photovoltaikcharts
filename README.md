@@ -1,6 +1,6 @@
 # ioBroker.photovoltaikcharts
 
-Draw charts especially for photovoltaic production and consumption data with [highcharts](http://www.highcharts.com/)
+VIS widgets for drawing charts especially for photovoltaic production and consumption data with [highcharts](http://www.highcharts.com/)
 
 To use the charts one of the history adapters is required: history, sql or InfluxDB.
 The two Time Series charts with Navigator currently only work with SQL adapter and MariaDB/mysql. Here I use special SQL queries to significantly reduce the amount of data already in the DBMS. Otherwise, a navigator with a time series with values every 10 seconds and more than one year would not be possible.
