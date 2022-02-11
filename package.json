@@ -1,0 +1,49 @@
+{
+  "name": "iobroker.photovoltaikcharts",
+  "version": "1.0.2",
+  "author": {
+    "name": "Markus Korporal",
+    "email": "markus@korporal.de"
+  },
+  "bugs": {
+    "url": "https://github.com/nobodyMO/ioBroker.photovoltaikcharts/issues"
+  },
+  "bundleDependencies": false,
+  "dependencies": {
+    "@iobroker/adapter-core": "^2.4.0",
+    "highcharts": "^9.3.3"
+  },
+  "deprecated": false,
+  "description": "This adapter contains some widgets with charts for photovoltaik statistic data in ioBroker.",
+  "devDependencies": {
+    "@alcalzone/release-script": "^1.8.1",
+    "axios": "^0.21.0",
+    "chai": "^4.2.0",
+    "del": "^6.0.0",
+    "gulp": "^4.0.2",
+    "gulp-concat": "^2.6.1",
+    "gulp-htmlmin": "^5.0.1",
+    "gulp-sourcemaps": "^3.0.0",
+    "gulp-uglify": "^3.0.2",
+    "mocha": "^8.2.1"
+  },
+  "homepage": "https://github.com/nobodyMO/ioBroker.photovoltaikcharts",
+  "keywords": [
+    "ioBroker",
+    "highcharts",
+    "chart",
+    "photovoltaik"
+  ],
+  "license": "https://www.highcharts.com/license",
+  "main": "Gruntfile.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nobodyMO/ioBroker.photovoltaikcharts.git"
+  },
+  "scripts": {
+    "build": "node node_modules/gulp/bin/gulp default",
+    "prepublish": "node node_modules/gulp/bin/gulp default",
+    "release": "release-script",
+    "test": "node node_modules/mocha/bin/mocha --exit"
+  }
+}

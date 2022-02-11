@@ -1,0 +1,48 @@
+{
+  "common": {
+    "name": "photovoltaikcharts",
+    "version": "1.0.2",
+    "news": {
+      "1.0.0": {
+        "en": "Initial release"
+      }
+    }, 
+    "title": "Photovoltaik Charts",
+    "titleLang": {
+      "en": "Photovoltaik Charts"
+    },
+    "desc": {
+      "en": "This adapter provides widgets with statistic charts based on historic data of the statistic adaptor."
+    },
+    "authors": [
+      "Markus Korporal <markus@korporal>"
+    ],
+    "license": "https://www.highcharts.com/license",
+    "platform": "javascript/Node.js",
+    "icon": "photovoltaikcharts.png",
+    "mode": "none",
+    "keywords": [
+      "charts",
+      "graphics",
+      "grafiken"
+    ],
+    "extIcon": "https://raw.githubusercontent.com/nobodyMO/ioBroker.photovoltaikcharts/master/admin/photovoltaikcharts.png",
+    "readme": "https://github.com/nobodyMO/ioBroker.photovoltaikcharts/blob/master/README.md",
+    "loglevel": "info",
+	"restartAdapters": [
+            "vis"
+        ],
+    "localLink": "%web_protocol%://%ip%:%web_port%/vis/edit.html",
+    "enabled": true,
+    "onlyWWW": true,
+    "singleton": true,
+	"type": "visualization-widgets",
+	"mode": "once",
+	"dependencies": [
+		"vis"
+	]
+  },
+  "native": {},
+  "objects": [],
+  "instanceObjects": []
+}
