@@ -1,6 +1,17 @@
-# ioBroker.photovoltaikcharts
+![Logo](admin/photovoltaikcharts.png)
 
-VIS widgets for drawing charts especially for photovoltaic production and consumption data with [highcharts](http://www.highcharts.com/)
+# ioBroker.photovoltaikcharts
+[![NPM version](https://img.shields.io/npm/v/iobroker.photovoltaikcharts.svg)](https://www.npmjs.com/package/iobroker.photovoltaikcharts)
+[![Downloads](https://img.shields.io/npm/dm/iobroker.photovoltaikcharts.svg)](https://www.npmjs.com/package/iobroker.photovoltaikcharts)
+![Number of Installations](https://iobroker.live/badges/photovoltaikcharts-installed.svg)
+![Current version in stable repository](https://iobroker.live/badges/photovoltaikcharts-stable.svg)
+[![Dependency Status](https://img.shields.io/david/nobodyMO/iobroker.photovoltaikcharts.svg)](https://david-dm.org/nobodyMO/iobroker.photovoltaikcharts)
+
+[![NPM](https://nodei.co/npm/iobroker.photovoltaikcharts.png?downloads=true)](https://nodei.co/npm/iobroker.photovoltaikcharts/)
+
+**Tests:** ![Test and Release](https://github.com/nobodyMO/ioBroker.photovoltaikcharts/workflows/Test%20and%20Release/badge.svg)
+
+## VIS widgets for drawing charts especially for photovoltaic production and consumption data with [highcharts](http://www.highcharts.com/)
 
 To use the charts one of the history adapters is required: history, sql or InfluxDB.
 The two Time Series charts with Navigator currently only work with SQL adapter and MariaDB/mysql. Here I use special SQL queries to significantly reduce the amount of data already in the DBMS. Otherwise, a navigator with a time series with values every 10 seconds and more than one year would not be possible.
@@ -78,7 +89,11 @@ The input fields do not all have format checks. Numbers should be entered with a
 	### __WORK IN PROGRESS__
 -->
 ## Changelog
-### 1.10.2 (2022-02-10)
+<!--
+    Placeholder for the next version (at the beginning of the line):
+    ### **WORK IN PROGRESS**
+-->
+### **WORK IN PROGRESS**
 * (nobodyMO) inital version
 
 

@@ -1,6 +1,6 @@
 {
   "name": "iobroker.photovoltaikcharts",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "author": {
     "name": "Markus Korporal",
     "email": "markus@korporal.de"
@@ -10,9 +10,6 @@
   },
   "bundleDependencies": false,
   "dependencies": {
-    "@iobroker/adapter-core": "^2.4.0",
-    "@alcalzone/release-script": "^1.8.1",
-    "axios": "^0.21.0",
     "chai": "^4.2.0",
     "del": "^6.0.0",
     "gulp": "^4.0.2",
@@ -25,7 +22,10 @@
   "deprecated": false,
   "description": "This adapter contains some widgets with charts for photovoltaik statistic data in ioBroker.",
   "devDependencies": {
-    "mocha": "^8.2.1"
+    "@alcalzone/release-script": "^2.2.2",
+    "@iobroker/testing": "^2.5.2",
+    "@types/gulp": "^4.0.9",
+    "axios": "^0.24.0"
   },
   "homepage": "https://github.com/nobodyMO/ioBroker.photovoltaikcharts",
   "keywords": [
@@ -35,13 +35,17 @@
     "photovoltaik"
   ],
   "license": "https://www.highcharts.com/license",
-  "main": "Gruntfile.js",
+  "main": "widgets/photovoltaikcharts.html",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/nobodyMO/ioBroker.photovoltaikcharts.git"
   },
   "scripts": {
-    "postinstall": "gulp default",
+    "test:package": "mocha test/package --exit",
+    "test": "npm run test:package",
+    "release": "release-script",
+    "postinstall": "gulp install",
     "build": "gulp default"
-  }
+  },
+  "readmeFilename": "README.md"
 }
