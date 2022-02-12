@@ -17,4 +17,3 @@ admin/i18n/flat.txt
 admin/i18n/*/flat.txt
 
 widgets/js/highcharts
-package-lock.json
