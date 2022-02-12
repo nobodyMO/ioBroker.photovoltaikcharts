@@ -59,8 +59,10 @@
         "localLink": "%web_protocol%://%ip%:%web_port%/vis/edit.html",
         "enabled": true,
         "onlyWWW": true,
+        "noConfig": true,
         "singleton": true,
         "type": "visualization-widgets",
+        "mode": "once",
         "dependencies": [
             "vis"
         ]
