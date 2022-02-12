@@ -45,7 +45,8 @@
     "www/",
     "io-package.json",
     "LICENSE",
-	"gulpfile.js"
+	"gulpfile.js",
+	"lib/"
   ],
   "scripts": {
     "test:package": "mocha test/package --exit",
