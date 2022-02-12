@@ -40,6 +40,13 @@
     "type": "git",
     "url": "git+https://github.com/nobodyMO/ioBroker.photovoltaikcharts.git"
   },
+  "files": [
+    "widgets/",
+    "www/",
+    "io-package.json",
+    "LICENSE",
+	"gulpfile.js"
+  ],
   "scripts": {
     "test:package": "mocha test/package --exit",
     "test": "npm run test:package",
