@@ -84,17 +84,12 @@ The time series support zoom and pinch (with shift key), mouse wheel as well as 
 
 The input fields do not all have format checks. Numbers should be entered with a dot (1.2). Some fields require input in JSON format, e.g. to pass categories or value lists. Again, there is no format check in the editor.
 
-<!--
-	Placeholder for the next version (at the beginning of the line):
-	### __WORK IN PROGRESS__
--->
 ## Changelog
 <!--
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### 1.0.4 (2022-02-12)
-* (nobodyMO) inital version
+### **WORK IN PROGRESS**
 
 
 ## iobroker app compatibility 

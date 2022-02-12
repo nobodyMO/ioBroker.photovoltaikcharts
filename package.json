@@ -34,7 +34,7 @@
     "chart",
     "photovoltaik"
   ],
-  "license": "https://www.highcharts.com/license",
+  "license": "CC BY-NC",
   "main": "widgets/photovoltaikcharts.html",
   "repository": {
     "type": "git",
