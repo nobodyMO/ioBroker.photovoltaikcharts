@@ -1,6 +1,6 @@
 {
   "name": "iobroker.photovoltaikcharts",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "author": {
     "name": "Markus Korporal",
     "email": "markus@korporal.de"
@@ -45,8 +45,8 @@
     "www/",
     "io-package.json",
     "LICENSE",
-	"gulpfile.js",
-	"lib/"
+    "gulpfile.js",
+    "lib/"
   ],
   "scripts": {
     "test:package": "mocha test/package --exit",

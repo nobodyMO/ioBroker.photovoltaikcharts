@@ -1,8 +1,20 @@
 {
     "common": {
         "name": "photovoltaikcharts",
-        "version": "1.0.5",
+        "version": "1.0.6",
         "news": {
+            "1.0.6": {
+                "en": "Fix js paths because vis only supports 2 levels",
+                "de": "Korrigieren Sie js-Pfade, da vis nur 2 Ebenen unterstützt",
+                "ru": "Исправьте пути js, потому что vis поддерживает только 2 уровня",
+                "pt": "Corrija os caminhos js porque o vis suporta apenas 2 níveis",
+                "nl": "Js-paden repareren omdat vis slechts 2 niveaus ondersteunt",
+                "fr": "Correction des chemins js car vis ne prend en charge que 2 niveaux",
+                "it": "Correggi i percorsi js perché vis supporta solo 2 livelli",
+                "es": "Corrija las rutas js porque vis solo admite 2 niveles",
+                "pl": "Napraw ścieżki js, ponieważ vis obsługuje tylko 2 poziomy",
+                "zh-cn": "修复 js 路径，因为 vis 只支持 2 个级别"
+            },
             "1.0.5": {
                 "en": "## iobroker app compatibility \nThe widgets works perfect in my self compiled version of the iobroker cordova app for android. The widgets only use the socket io connection from VIS.  Only the export functions of highcharts do not work under Cordova.\n\nHowever, due to licensing restrictions on the commercial use of highcharts, it is unlikely that this adapter will be included in the official Android app. \n\n## License\nThis adapter based on highcharts and highstock. These are commercial products, which require to obain a appropriate licence. Please check https://www.highcharts.com/license for licensing.\nNon commercial use of highcharts and highstock is currently free under a Creative Commons (CC) Attribution-Non-Commercial license.\n\nDuring the installation of this adapter the npm package highcharts will automaticaly downloaded and the required files are copied to the widget directory.\n\nCopyright (c) 2022 nobodyMO",
                 "de": "## iobroker-App-Kompatibilität\nDie Widgets funktionieren perfekt in meiner selbst kompilierten Version der iobroker Cordova App für Android. Die Widgets verwenden nur die Socket-io-Verbindung von VIS. Lediglich die Exportfunktionen von Highcharts funktionieren unter Cordova nicht.\n\nAufgrund von Lizenzbeschränkungen für die kommerzielle Nutzung von Highcharts ist es jedoch unwahrscheinlich, dass dieser Adapter in der offiziellen Android-App enthalten sein wird.\n\n## Lizenz\nDieser Adapter basiert auf Highcharts und Highstock. Hierbei handelt es sich um Handelsprodukte, die einer entsprechenden Zulassung bedürfen. Bitte überprüfen Sie https://www.highcharts.com/license für die Lizenzierung.\nDie nichtkommerzielle Nutzung von Highcharts und Highstock ist derzeit kostenlos unter einer Creative Commons (CC) Attribution-Non-Commercial-Lizenz.\n\nWährend der Installation dieses Adapters wird das npm-Paket highcharts automatisch heruntergeladen und die benötigten Dateien in das Widget-Verzeichnis kopiert.\n\nCopyright (c) 2022 niemand MO",
