@@ -373,7 +373,7 @@ gulp.task('copyHighchartsjs', () => {
         './node_modules/highcharts/modules/drag-panes.js','./node_modules/highcharts/modules/drag-panes.js.map'		
 		
     ],{"allowEmpty": true})
-        .pipe(gulp.dest('./widgets/photovoltaikchartWidget/js/highcharts'));
+        .pipe(gulp.dest('./widgets/photovoltaikchartWidget/highcharts'));
 });
 
 gulp.task('copyHighchartsjs2', () => {
@@ -389,7 +389,7 @@ gulp.task('copyHighchartsjs2', () => {
         '../highcharts/modules/drag-panes.js','../highcharts/modules/drag-panes.js.map'		
 		
     ],{"allowEmpty": true})
-        .pipe(gulp.dest('./widgets/photovoltaikchartWidget/js/highcharts'));
+        .pipe(gulp.dest('./widgets/photovoltaikchartWidget/highcharts'));
 });
 
 

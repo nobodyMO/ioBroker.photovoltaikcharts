@@ -89,6 +89,10 @@ The input fields do not all have format checks. Numbers should be entered with a
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+
+- Fix js paths because vis only supports 2 levels
+
 ### 1.0.5 (2022-02-12)
 
 
