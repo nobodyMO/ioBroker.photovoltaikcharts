@@ -39,7 +39,6 @@
         "desc": {
             "en": "This adapter provides widgets with statistic charts based on historic data of the statistic adaptor and highcharts.",
             "de": "Dieser adapter enthält VIS widgets speziell zur Anzeige aggregierter historischer Daten auf kummulierten Werten des Statistik-Adapters und highcharts."
-
         },
         "authors": [
             "Markus Korporal <markus@korporal>"
@@ -65,7 +64,6 @@
         "noConfig": true,
         "singleton": true,
         "type": "visualization-widgets",
-        "mode": "once",
         "dependencies": [
             "vis"
         ]
