@@ -1256,8 +1256,7 @@ function handler(event) {
 			var i;
 			for (i=1;i<7;i++){
 				if (data['series'+ i + 'historyoid'] && data ['instance'+ i ]){
-					oidList.push ({id:j, historyOID:data['series'+ i + 'historyoid'],instance:data ['instance'+ i ],multiplicator:parseFloat(data ['multiplicator'+ i ]) || 1,lastX:0 });
-					
+					oidList.push ({id:j, historyOID:data['series'+ i + 'historyoid'],instance:data ['instance'+ i ],currentOID:data ['series'+ i + 'currentoid'],  multiplicator:parseFloat(data ['multiplicator'+ i ]) || 1,lastX:0 });
 					seriesData.push ({
 						name: data['series' + i +'label'] ,
 						data: [],
