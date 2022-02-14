@@ -479,17 +479,23 @@ function normalizeDate (date,mode) {
 		
 	H.Axis.prototype.zoom = function (newMin, newMax) {
 		console.log ("Axis Zoom handler min:"+ new Date(newMin) + " max:" + new Date (newMax));
-
+		var chart = this
+		var maxX,minX;
+		var chart=this.chart;
+		if (chart && chart.navigator && chart.navigator.xAxis) {
+			minX=chart.navigator.xAxis.min;
+			maxX=chart.navigator.xAxis.max;
+		}
 		var axis = this,
 			dataMin = this.dataMin,
 			dataMax = this.dataMax,
 			options = this.options,
 			min = Math.min(dataMin,
 			H.pick(options.min,
-			dataMin)),
+			dataMin),minX),
 			max = Math.max(dataMax,
 			H.pick(options.max,
-			dataMax)),
+			dataMax),maxX),
 			evt = {
 				newMin: newMin,
 				newMax: newMax
@@ -1341,6 +1347,11 @@ function handler(event) {
 					}
 				}
 			}
+			
+			function setExtremes(event) {
+				console.log ('setExtremes event ' + new Date (event.min) + ' - ' + new Date (event.max)+ ' - ' + event.trigger);
+			}
+			
 			if (vis.language === 'de')Highcharts.setOptions(fbobj.highchartsOptions);
 			var unit = data.unit;
 			chart = Highcharts.stockChart(divId + widgetID, {
@@ -1433,7 +1444,8 @@ function handler(event) {
 				},
 				xAxis: {
 					events: {
-						afterSetExtremes: afterSetExtremes
+						afterSetExtremes: afterSetExtremes,
+						setExtremes: setExtremes
 					},
 					dateTimeLabelFormats:  fbobj.highchartsDateTimeLabelFormats,
 					overscroll: 10000,
@@ -1844,6 +1856,10 @@ function handler(event) {
 				}
 			}
 			
+			function setExtremes(event) {
+				console.log ('setExtremes event ' + new Date (event.min) + ' - ' + new Date (event.max)+ ' - ' + event.trigger);
+			}
+			
 			
 			if (vis.language === 'de') Highcharts.setOptions(fbobj.highchartsOptions);
 			var unit = data.unit;
@@ -1925,6 +1941,7 @@ function handler(event) {
 				xAxis: {
 					events: {
 						afterSetExtremes: afterSetExtremes,
+						setExtremes: setExtremes
 					},
 					ordinal: false,
 					dateTimeLabelFormats: fbobj.highchartsDateTimeLabelFormats
