@@ -89,7 +89,7 @@ The input fields do not all have format checks. Numbers should be entered with a
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.0.7 (2022-02-15)
 
 - fix pinch zoom
 - fix dynamic update behaviour on zoom
@@ -101,7 +101,6 @@ The input fields do not all have format checks. Numbers should be entered with a
 - Fix js paths because vis only supports 2 levels
 
 ### 1.0.5 (2022-02-12)
-
 
 ## iobroker app compatibility 
 The widgets works perfect in my self compiled version of the iobroker cordova app for android. The widgets only use the socket io connection from VIS.  Only the export functions of highcharts do not work under Cordova.
