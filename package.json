@@ -45,6 +45,7 @@
     "www/",
     "io-package.json",
     "LICENSE",
+	"README.md",
     "gulpfile.js",
     "lib/"
   ],
