@@ -17,15 +17,15 @@
     "gulp-htmlmin": "^5.0.1",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-uglify": "^3.0.2",
-    "highcharts": "^9.3.3"
+    "highcharts": "^9.3.3",
+    "@types/gulp": "^4.0.9",
+    "axios": "^0.25.0"
   },
   "deprecated": false,
   "description": "This adapter contains some widgets with charts for photovoltaik statistic data in ioBroker.",
   "devDependencies": {
     "@alcalzone/release-script": "^3.5.2",
-    "@iobroker/testing": "^2.5.4",
-    "@types/gulp": "^4.0.9",
-    "axios": "^0.25.0"
+    "@iobroker/testing": "^2.5.4"
   },
   "homepage": "https://github.com/nobodyMO/ioBroker.photovoltaikcharts",
   "keywords": [
