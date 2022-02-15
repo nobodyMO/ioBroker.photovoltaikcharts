@@ -1614,18 +1614,20 @@ function handler(event) {
 					console.log ('Update series 1');			
 					chart.series[0].data[chart.series[0].data.length-1].update((parseFloat(newVal) || 0) * oidList[0].multiplicator);
 				} else {
-				   console.log ('Add new value to series 1');
-   					var oldExtremes=chart.xAxis[0].getExtremes();
-					console.log ('Old extremes: ' + JSON.stringify (oldExtremes));
-					var oldLastX=(chart.series && chart.series[0].data && chart.series[0].data.length>0 && chart.series[0].data[chart.series[0].data.length-1] && chart.series[0].data[chart.series[0].data.length-1].x? chart.series[0].data[chart.series[0].data.length-1].x:0);
-					console.log ('Last X: ' + oldLastX);
-					console.log ('CompareX: ' + JSON.stringify (oldExtremes));
-					if (oldExtremes.max > oldLastX-(10*60*1000)){
-						//chart.xAxis[0].setExtremes(oldExtremes.min+eventDate.getTime()-oldExtremes.max,eventDate.getTime());
-						chart.series[0].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[0].multiplicator]); 
-						var newMaxX=chart.navigator.xAxis.max;
-						if (oldLastX!=newMaxX) chart.xAxis[0].setExtremes(oldExtremes.dataMin+newMaxX-oldExtremes.dataMax,newMaxX);
+				    console.log ('Add new value to series 1');
+					if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
+						var oldExtremes=chart.xAxis[0].getExtremes();
+						console.log ('Old extremes: ' + JSON.stringify (oldExtremes));
+						var oldLastX=(chart.series && chart.series[0].data && chart.series[0].data.length>0 && chart.series[0].data[chart.series[0].data.length-1] && chart.series[0].data[chart.series[0].data.length-1].x? chart.series[0].data[chart.series[0].data.length-1].x:0);
+						console.log ('Last X: ' + oldLastX);
+						console.log ('CompareX: ' + JSON.stringify (oldExtremes));
+						if (oldExtremes.max > oldLastX-(10*60*1000)){
+							//chart.xAxis[0].setExtremes(oldExtremes.min+eventDate.getTime()-oldExtremes.max,eventDate.getTime());
+							chart.series[0].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[0].multiplicator]); 
+							var newMaxX=chart.navigator.xAxis.max;
+							if (oldLastX!=newMaxX) chart.xAxis[0].setExtremes(oldExtremes.dataMin+newMaxX-oldExtremes.dataMax,newMaxX);
 
+						}
 					}
 				}
 				
@@ -1639,11 +1641,13 @@ function handler(event) {
 				var eventDate=normalizeDate (new Date (),data.normalizeDate);
 				if (chart.series[1].data && chart.series[1].data[chart.series[1].data.length-1] && chart.series[1].data[chart.series[1].data.length-1].x==eventDate.getTime()){
 					chart.series[1].data[chart.series[1].data.length-1].update((parseFloat(newVal) || 0) * oidList[1].multiplicator);
-				} else {
-   					var oldExtremes=chart.xAxis[1].getExtremes();
-					var oldLastX=(chart.series && chart.series[1].data && chart.series[1].data.length>0 && chart.series[1].data[chart.series[1].data.length-1] && chart.series[1].data[chart.series[1].data.length-1].x? chart.series[1].data[chart.series[1].data.length-1].x:0);
-					if (oldExtremes.max > oldLastX-(10*60*1000)){
-						chart.series[1].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[1].multiplicator]); 
+				} else {   				
+					if (chart && chart.xAxis && typeof chart.xAxis[1] != 'undefined') {
+						var oldExtremes=chart.xAxis[1].getExtremes();
+						var oldLastX=(chart.series && chart.series[1].data && chart.series[1].data.length>0 && chart.series[1].data[chart.series[1].data.length-1] && chart.series[1].data[chart.series[1].data.length-1].x? chart.series[1].data[chart.series[1].data.length-1].x:0);
+						if (oldExtremes.max > oldLastX-(10*60*1000)){
+							chart.series[1].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[1].multiplicator]); 
+						}
 					}					
 				}
 			};
@@ -1655,12 +1659,14 @@ function handler(event) {
 				var eventDate=normalizeDate (new Date (),data.normalizeDate);
 				if (chart.series[2].data && chart.series[2].data[chart.series[2].data.length-1] && chart.series[2].data[chart.series[2].data.length-1].x==eventDate.getTime()){
 					chart.series[2].data[chart.series[2].data.length-1].update((parseFloat(newVal) || 0) * oidList[2].multiplicator);
-				} else {
-   					var oldExtremes=chart.xAxis[2].getExtremes();
-					var oldLastX=(chart.series && chart.series[2].data && chart.series[2].data.length>0 && chart.series[2].data[chart.series[2].data.length-1] && chart.series[2].data[chart.series[2].data.length-1].x? chart.series[2].data[chart.series[2].data.length-1].x:0);
-					if (oldExtremes.max > oldLastX-(10*60*1000)){
-						chart.series[2].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[2].multiplicator]); 
-					}					
+				} else {   					
+					if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
+						var oldExtremes=chart.xAxis[0].getExtremes();
+						var oldLastX=(chart.series && chart.series[2].data && chart.series[2].data.length>0 && chart.series[2].data[chart.series[2].data.length-1] && chart.series[2].data[chart.series[2].data.length-1].x? chart.series[2].data[chart.series[2].data.length-1].x:0);
+						if (oldExtremes.max > oldLastX-(10*60*1000)){
+							chart.series[2].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[2].multiplicator]); 
+						}					
+					}
 				}
 			};
 			function onChangeSeries4ts(e, newVal, oldVal) {
@@ -1672,10 +1678,12 @@ function handler(event) {
 				if (chart.series[3].data && chart.series[3].data[chart.series[3].data.length-1] && chart.series[3].data[chart.series[3].data.length-1].x==eventDate.getTime()){
 					chart.series[3].data[chart.series[3].data.length-1].update((parseFloat(newVal) || 0) * oidList[3].multiplicator);
 				} else {
-   					var oldExtremes=chart.xAxis[3].getExtremes();
-					var oldLastX=(chart.series && chart.series[3].data && chart.series[3].data.length>0 && chart.series[3].data[chart.series[3].data.length-1] && chart.series[3].data[chart.series[3].data.length-1].x? chart.series[3].data[chart.series[3].data.length-1].x:0);
-					if (oldExtremes.max > oldLastX-(10*60*1000)){
-						chart.series[3].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[3].multiplicator]); 
+					if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
+						var oldExtremes=chart.xAxis[0].getExtremes();
+						var oldLastX=(chart.series && chart.series[3].data && chart.series[3].data.length>0 && chart.series[3].data[chart.series[3].data.length-1] && chart.series[3].data[chart.series[3].data.length-1].x? chart.series[3].data[chart.series[3].data.length-1].x:0);
+						if (oldExtremes.max > oldLastX-(10*60*1000)){
+							chart.series[3].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[3].multiplicator]); 
+						}
 					}					
 				}
 			};
@@ -1688,11 +1696,13 @@ function handler(event) {
 				if (chart.series[4].data && chart.series[4].data[chart.series[4].data.length-1] && chart.series[4].data[chart.series[4].data.length-1].x==eventDate.getTime()){
 					chart.series[4].data[chart.series[4].data.length-1].update((parseFloat(newVal) || 0) * oidList[4].multiplicator);
 				} else {
-   					var oldExtremes=chart.xAxis[4].getExtremes();
-					var oldLastX=(chart.series && chart.series[4].data && chart.series[4].data.length>0 && chart.series[4].data[chart.series[4].data.length-1] && chart.series[4].data[chart.series[4].data.length-1].x? chart.series[4].data[chart.series[4].data.length-1].x:0);
-					if (oldExtremes.max > oldLastX-(10*60*1000)){
-						chart.series[4].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[4].multiplicator]); 
-					}					
+   					if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
+						var oldExtremes=chart.xAxis[0].getExtremes();
+						var oldLastX=(chart.series && chart.series[4].data && chart.series[4].data.length>0 && chart.series[4].data[chart.series[4].data.length-1] && chart.series[4].data[chart.series[4].data.length-1].x? chart.series[4].data[chart.series[4].data.length-1].x:0);
+						if (oldExtremes.max > oldLastX-(10*60*1000)){
+							chart.series[4].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[4].multiplicator]); 
+						}					
+					}
 				}
 			};
 			function onChangeSeries6ts(e, newVal, oldVal) {
@@ -1704,11 +1714,13 @@ function handler(event) {
 				if (chart.series[5].data && chart.series[5].data[chart.series[5].data.length-1] && chart.series[5].data[chart.series[5].data.length-1].x==eventDate.getTime()){
 					chart.series[5].data[chart.series[5].data.length-1].update((parseFloat(newVal) || 0) * oidList[5].multiplicator);
 				} else {
-   					var oldExtremes=chart.xAxis[5].getExtremes();
-					var oldLastX=(chart.series && chart.series[5].data && chart.series[5].data.length>0 && chart.series[5].data[chart.series[5].data.length-1] && chart.series[5].data[chart.series[5].data.length-1].x? chart.series[5].data[chart.series[5].data.length-1].x:0);
-					if (oldExtremes.max > oldLastX-(10*60*1000)){
-						chart.series[5].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[5].multiplicator]); 
-					}					
+					if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined'){
+						var oldExtremes=chart.xAxis[0].getExtremes();
+						var oldLastX=(chart.series && chart.series[5].data && chart.series[5].data.length>0 && chart.series[5].data[chart.series[5].data.length-1] && chart.series[5].data[chart.series[5].data.length-1].x? chart.series[5].data[chart.series[5].data.length-1].x:0);
+						if (oldExtremes.max > oldLastX-(10*60*1000)){
+							chart.series[5].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[5].multiplicator]); 
+						}					
+					}
 				}
 			};
 
