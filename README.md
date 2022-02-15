@@ -89,6 +89,13 @@ The input fields do not all have format checks. Numbers should be entered with a
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+
+- fix pinch zoom
+- fix dynamic update behaviour on zoom
+- adopted navigator sql statements
+- add bar and column types
+
 ### 1.0.6 (2022-02-13)
 
 - Fix js paths because vis only supports 2 levels
