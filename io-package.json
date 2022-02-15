@@ -1,7 +1,7 @@
 {
     "common": {
         "name": "photovoltaikcharts",
-        "version": "1.0.6",
+        "version": "1.0.7",
         "news": {
             "1.0.6": {
                 "en": "Fix js paths because vis only supports 2 levels",
