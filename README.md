@@ -89,8 +89,7 @@ The input fields do not all have format checks. Numbers should be entered with a
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
- 
-### **WORK IN PROGRESS**
+### 1.0.7 (2022-02-15)
 
 - fix pinch zoom
 - fix dynamic update behaviour on zoom
