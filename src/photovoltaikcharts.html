@@ -1,7 +1,7 @@
 <!--
     ioBroker.vis photovoltaik charts Widget-Set
 
-    version: "1.0.3"
+    version: "1.0.8"
  
     Copyright 2022 nobodyMO markus@korporal.de
 -->
@@ -24,7 +24,30 @@ $(function() {
 	
     if (vis.editMode) {
         $.extend(true, systemDictionary, {
-            "series1historyoid":        {"en": "ID for Series 1",             		"de": "ID für Datenreihe 1",      					"ru": "ID for Series 1"},
+            "numberOfYears":        	{"en": "Count of years",             		"de": "Anzahl der Jahre",      						"ru": "Count of years"},
+            "seriesCount":        		{"en": "Count of Series in chart",          "de": "Anzahl der Datenreihen im Diagramm",      	"ru": "Count of Series in chart"},
+            "group_series":        		{"en": "Series settings",             		"de": "Einstellungen Datenreihe",      				"ru": "Series settings"},
+            "group_chart":        		{"en": "Chart settings",             		"de": "Diagrammeinstellungen",      				"ru": "Chart settings"},
+            "group_zoom":        		{"en": "Zoom settings",             		"de": "Zoom Einstellungen",      					"ru": "Zoom settings"},
+            "group_axis":        		{"en": "Axis settings",             		"de": "Achsen Einstellungen",      					"ru": "Axis settings"},
+            "group_nagigator":      	{"en": "Navigator settings",             	"de": "Navigator Einstellungen",      				"ru": "Navigator settings"},
+            "group_years":      		{"en": "Years settings",        	     	"de": "Jahreseinstellungen",      				"ru": "Years settings"},
+            "serieshistoryoid":        	{"en": "ID for Series",             		"de": "ID für Datenreihe",      				"ru": "ID for Series 1"},
+            "instance":       			{"en": "History Instance Series",         	"de": "History Instance Datenreihe",     			"ru": "History Instance Series"},
+            "serieslabel":           	{"en": "Label for Series",                	"de": "Bezeichnung für Datenreihe",       			"ru": "Label for Series 1"},
+            "multiplicator":           	{"en": "Multiplicator for Series",        	"de": "Multiplicator für Datenreihe",     			"ru": "Multiplicator for Series"},
+            "seriescurrentoid":        	{"en": "ID for Series current value",     	"de": "ID für aktuellen Wert für Datenreihe", 		"ru": "ID for Series current value"},
+            "seriescolor":             	{"en": "Color for Series",                	"de": "Farbe für Datenreihe",               		"ru": "Color for Series"},
+            "seriesType":            	{"en": "Diagram type",             			"de": "Diagrammtyp Datenreihe",  			        "ru": "Diagram type"},
+            "serieshistoryoid":        	{"en": "ID for Series",             		"de": "ID für Datenreihe",      					"ru": "ID for Series"},
+            "serieslinewidth":         	{"en": "Line width for Series",           	"de": "Liniendicke für Datenreihe",              	"ru": "Line width for Series"},
+            "serieshoverlinewidth":    	{"en": "Line width on hover for Series", 	"de": "Liniendicke bei Markierung für Datenreihe",  "ru": "Line width on hover for Series"},
+            "seriesstep":         		{"en": "Steping for Series", 	          	"de": "Schritt für Datenreihe",              		"ru": "Steping for Series"},
+			"seriesopacity":        	{"en": "Fill opacity for Series (%)",		"de": "Füllstärke für Datenreihe (%)",       		"ru": "Fill opacity for Series (%)"},
+			"seriesaxis":        		{"en": "y-Axis for Series",					"de": "y-Achse für Datenreihe",       				"ru": "y-Axis for Series"},
+			"seriesstacking":      		{"en": "Stacking for Series",				"de": "Stapel für Datenreihe",       				"ru": "Stacking for Series"},
+			
+			
             "instance1":       			{"en": "History Instance Series 1",         "de": "History Instance Datenreihe 1",     			"ru": "History Instance Series 1"},
             "series1label":           	{"en": "Label for Series 1",                "de": "Bezeichnung für Datenreihe 1",       		"ru": "Label for Series 1"},
             "multiplicator1":           {"en": "Multiplicator for Series 1",        "de": "Multiplicator für Datenreihe 1",     		"ru": "Multiplicator for Series 1"},
@@ -38,40 +61,8 @@ $(function() {
             "series2currentoid":        {"en": "ID for Series 2 current value",     "de": "ID für aktuellen Wert für Datenreihe 2", 	"ru": "ID for Series 2 current value"},
             "series2color":             {"en": "Color for Series 2",                "de": "Farbe für Datenreihe 2",               		"ru": "Color for Series 2"},
             "series2Type":            	{"en": "Diagram type Series 2",             "de": "Diagrammtyp Datenreihe 2",  			        "ru": "Diagram type Series 2"},
-            "series3historyoid":        {"en": "ID for Series 3",             		"de": "ID für Datenreihe 3",      					"ru": "ID for Series 3"},
-            "instance3":       			{"en": "History Instance Series 3",         "de": "History Instance Datenreihe 3",     			"ru": "History Instance Series 3"},
-            "series3label":           	{"en": "Label for Series 3",                "de": "Bezeichnung für Datenreihe 3",       		"ru": "Label for Series 3"},
-            "multiplicator3":           {"en": "Multiplicator for Series 3",        "de": "Multiplicator für Datenreihe 3",     		"ru": "Multiplicator for Series 3"},
-            "series3currentoid":        {"en": "ID for Series 3 current value",     "de": "ID für aktuellen Wert für Datenreihe 3", 	"ru": "ID for Series 3 current value"},
-            "series3color":             {"en": "Color for Series 3",                "de": "Farbe für Datenreihe 3",               		"ru": "Color for Series 3"},
-            "series3Type":            	{"en": "Diagram type Series 3",             "de": "Diagrammtyp Datenreihe 3",  			        "ru": "Diagram type Series 3"},
-            "series4historyoid":        {"en": "ID for Series 4",             		"de": "ID für Datenreihe 4",      					"ru": "ID for Series 4"},
-            "instance4":       			{"en": "History Instance Series 4",         "de": "History Instance Datenreihe 4",     			"ru": "History Instance Series 4"},
-            "series4label":           	{"en": "Label for Series 4",                "de": "Bezeichnung für Datenreihe 4",       		"ru": "Label for Series 4"},
-            "multiplicator4":           {"en": "Multiplicator for Series 4",        "de": "Multiplicator für Datenreihe 4",     		"ru": "Multiplicator for Series 4"},
-            "series4currentoid":        {"en": "ID for Series 4 current value",     "de": "ID für aktuellen Wert für Datenreihe 4", 	"ru": "ID for Series 4 current value"},
-            "series4color":             {"en": "Color for Series 4",                "de": "Farbe für Datenreihe 4",               		"ru": "Color for Series 4"},
-            "series4Type":            	{"en": "Diagram type Series 4",             "de": "Diagrammtyp Datenreihe 4",  			        "ru": "Diagram type Series 4"},
-            "series5historyoid":        {"en": "ID for Series 5",             		"de": "ID für Datenreihe 5",      					"ru": "ID for Series 5"},
-            "instance5":       			{"en": "History Instance Series 5",         "de": "History Instance Datenreihe 5",     			"ru": "History Instance Series 5"},
-            "series5label":           	{"en": "Label for Series 5",                "de": "Bezeichnung für Datenreihe 5",       		"ru": "Label for Series 5"},
-            "multiplicator5":           {"en": "Multiplicator for Series 5",        "de": "Multiplicator für Datenreihe 5",     		"ru": "Multiplicator for Series 5"},
-            "series5currentoid":        {"en": "ID for Series 5 current value",     "de": "ID für aktuellen Wert für Datenreihe 5", 	"ru": "ID for Series 5 current value"},
-            "series5color":             {"en": "Color for Series 5",                "de": "Farbe für Datenreihe 5",               		"ru": "Color for Series 5"},
-            "series5Type":            	{"en": "Diagram type Series 5",             "de": "Diagrammtyp Datenreihe 5",  			        "ru": "Diagram type Series 5"},
-            "series6historyoid":        {"en": "ID for Series 6",             		"de": "ID für Datenreihe 6",      					"ru": "ID for Series 6"},
-            "instance6":       			{"en": "History Instance Series 6",         "de": "History Instance Datenreihe 6",     			"ru": "History Instance Series 6"},
-            "series6label":           	{"en": "Label for Series 6",                "de": "Bezeichnung für Datenreihe 6",       		"ru": "Label for Series 6"},
-            "multiplicator6":           {"en": "Multiplicator for Series 6",        "de": "Multiplicator für Datenreihe 6",     		"ru": "Multiplicator for Series 6"},
-            "series6currentoid":        {"en": "ID for Series 6 current value",     "de": "ID für aktuellen Wert für Datenreihe 6", 	"ru": "ID for Series 6 current value"},
-            "series6color":             {"en": "Color for Series 6",                "de": "Farbe für Datenreihe 6",               		"ru": "Color for Series 6"},
-            "series6Type":            	{"en": "Diagram type Series 6",             "de": "Diagrammtyp Datenreihe 6",  			        "ru": "Diagram type  Series 6"},
-            "year1color1":             	{"en": "Color 1 for year 1",                "de": "Farbe 1 für Jahr 1",               			"ru": "Color 1 for year 1"},
-            "year1color2":             	{"en": "Color 2 for year 1",                "de": "Farbe 2 für Jahr 1",               			"ru": "Color 2 for year 1"},
-            "year2color1":             	{"en": "Color 1 for year 2",                "de": "Farbe 1 für Jahr 2",               			"ru": "Color 1 for year 2"},
-            "year2color2":             	{"en": "Color 2 for year 2",                "de": "Farbe 2 für Jahr 2",               			"ru": "Color 2 for year 2"},
-            "year3color1":             	{"en": "Color 1 for year 3",                "de": "Farbe 1 für Jahr 3",               			"ru": "Color 1 for year 3"},
-            "year3color2":             	{"en": "Color 2 for year 3",                "de": "Farbe 2 für Jahr 3",               			"ru": "Color 2 for year 3"},
+            "yearcolor1":             	{"en": "Color 1 for year",                "de": "Farbe 1 für Jahr",               			"ru": "Color 1 for year"},
+            "yearcolor2":             	{"en": "Color 2 for year",                "de": "Farbe 2 für Jahr",               			"ru": "Color 2 for year"},
             "title":       				{"en": "Title",                				"de": "Titel",     									"ru": "Title"},
             "target":         			{"en": "Target",                  			"de": "Zielwert",									"ru": "Target"},
             "targetName":				{"en": "Label for target",        			"de": "Bezeichnung für Zielwert", 					"ru": "Label for target"},
@@ -170,12 +161,9 @@ $(function() {
         class="vis-tpl"
         data-vis-type="history" 
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev.png"></img>'
-		
-        data-vis-attrs="series1historyoid/hid/onHidChanged;instance1/history;series1currentoid/id;series1label;multiplicator1[1];"
-        data-vis-attrs0="series2historyoid/hid/onHidChanged;instance2/history;series2currentoid/id;series2label;multiplicator2[1];"
-		data-vis-attrs1="year1color1[#DBA901]/color;year1color2[#F7D358]/color;year2color1[#FF4000]/color;year2color2[#FE642E]/color;year3color1[#0d233a]/color;year3color2[#2f7ed8]/color;"
-        data-vis-attrs2="title;unit;target;targetName;stacklabel;showLegend[true]/checkbox;"
-        data-vis-attrs3="alpha/number;beta/number;depth/number;viewDistance/number;"
+		data-vis-attrs="seriesCount[1]/number,1,6,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;seriescurrentoid(1-seriesCount)/id;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriesType(1-seriesCount)/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesopacity(1-seriesCount)[30]/slider,1,100,1;"
+        data-vis-attrs0="group.chart;title;unit;target;targetName;stacklabel;showLegend[true]/checkbox;showMenu[true]/checkbox;alpha/number;beta/number;depth/number;viewDistance/number;numberOfYears[3]/number,1,20,1;group.years/byindex;"
+		data-vis-attrs1="yearcolor1(1-numberOfYears)/color;yearcolor2(1-numberOfYears)/color;yearcolor3(1-numberOfYears)/color;yearcolor4(1-numberOfYears)/color;yearcolor5(1-numberOfYears)/color;yearcolor6(1-numberOfYears)/color;"
         data-vis-set="photovoltaikcharts"
         data-vis-name="Power Generation Monthly"
 		data-vis-update-style="true"
@@ -198,13 +186,9 @@ $(function() {
         data-vis-type="history" 
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev2.png"></img>'
 		
-        data-vis-attrs="series1historyoid/hid/onHidChanged;instance1/history;series1currentoid/id;series1label;multiplicator1[1];series1color[#2f7ed8]/color;"
-        data-vis-attrs0="series2historyoid/hid/onHidChanged;instance2/history;series2currentoid/id;series2label;multiplicator2[1];series2color[#0d233a]/color;"
-        data-vis-attrs1="series3historyoid/hid/onHidChanged;instance3/history;series3currentoid/id;series3label;multiplicator3[1];series3color[#33FF3B]/color;"
-        data-vis-attrs2="series4historyoid/hid/onHidChanged;instance4/history;series4currentoid/id;series4label;multiplicator4[1];series4color[#FF8F33]/color;"
-        data-vis-attrs3="series5historyoid/hid/onHidChanged;instance5/history;series5currentoid/id;series5label;multiplicator5[1];series5color[#F433FF]/color;"
-        data-vis-attrs4="title;unit;target;targetName;stacklabel;showLegend[true]/checkbox;showMenu[true]/checkbox;"
-        data-vis-attrs5="alpha/number;beta/number;depth/number;viewDistance/number"
+        data-vis-attrs="seriesCount[1]/number,1,20,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;seriescurrentoid(1-seriesCount)/id;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#2f7ed8]/color;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
+        data-vis-attrs0="group.chart;title;unit;target;targetName;stacklabel;showLegend[true]/checkbox;showMenu[true]/checkbox;numberOfYears[4]/number,1,20,1;"
+        data-vis-attrs1="alpha/number;beta/number;depth/number;viewDistance/number"
 	
         data-vis-set="photovoltaikcharts"
         data-vis-name="Power Generation Yearly"
@@ -227,15 +211,11 @@ $(function() {
         data-vis-type="history" 
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev3.png"></img>'
 		
-        data-vis-attrs="navigatorRange[48]/slider,0,100,1;series1historyoid/hid/onHidChanged;instance1/history;series1currentoid/id;series1label;multiplicator1[1];series1color[#FF5A33]/color;series1Type[area]/select,area,areaspline,line,spline,column,bar;series1linewidth[1]/number;series1hoverlinewidth[2]/number;series1step/select,no,left,center,right;series1opacity[30]/slider,1,100,1;series1axis[0]/select,0,1;series1stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs0="series2historyoid/hid/onHidChanged;instance2/history;series2currentoid/id;series2label;multiplicator2[1];series2color[#2f7ed8]/color;series2Type[area]/select,area,areaspline,line,spline,column,bar;series2linewidth[1]/number;series2hoverlinewidth[2]/number;series2step/select,no,left,center,right;series2opacity[30]/slider,1,100,1;series2axis[0]/select,0,1;series2stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs1="series3historyoid/hid/onHidChanged;instance3/history;series3currentoid/id;series3label;multiplicator3[1];series3color[#0d233a]/color;series3Type[area]/select,area,areaspline,line,spline,column,bar;series3linewidth[1]/number;series3hoverlinewidth[2]/number;series3step/select,no,left,center,right;series3opacity[30]/slider,1,100,1;series3axis[0]/select,0,1;series3stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs2="series4historyoid/hid/onHidChanged;instance4/history;series4currentoid/id;series4label;multiplicator4[1];series4color[#334DFF]/color;series4Type[area]/select,area,areaspline,line,spline,column,bar;series4linewidth[1]/number;series4hoverlinewidth[2]/number;series4step/select,no,left,center,right;series4opacity[30]/slider,1,100,1;series4axis[1]/select,0,1;series4stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs3="series5historyoid/hid/onHidChanged;instance5/history;series5currentoid/id;series5label;multiplicator5[1];series5color[#F433FF]/color;series5Type[area]/select,area,areaspline,line,spline,column,bar;series5linewidth[1]/number;series5hoverlinewidth[2]/number;series5step/select,no,left,center,right;series5opacity[30]/slider,1,100,1;series5axis[1]/select,0,1;series5stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs4="series6historyoid/hid/onHidChanged;instance6/history;series6currentoid/id;series6label;multiplicator6[1];series6color[#D7D5D4]/color;series6Type[line]/select,area,areaspline,line,spline,column,bar;series6linewidth[1]/number;series6hoverlinewidth[2]/number;series6step/select,no,left,center,right;series6opacity[30]/slider,1,100,1;series6axis[0]/select,0,1;series6stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs5="title;unit;showLegend[true]/checkbox;showMenu[true]/checkbox;chart1Height[48]/slider,1,100,1;chart2Height[48]/slider,1,100,1;chartspacing[4]/slider,0,200,1;"
-        data-vis-attrs6="normalizeDate[no]/select,no,hour,day,week,month,year;yAxis1min;yAxis1max;yAxis2min;yAxis2max;;yAxis1tickamount/number;"
-        data-vis-attrs7="zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m,ytd,1y,all;"
+        data-vis-attrs="group.navigator;navigatorRange[48]/slider,0,100,1;"
+        data-vis-attrs0="seriesCount[1]/number,1,20,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;seriescurrentoid(1-seriesCount)/id;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#2f7ed8]/color;seriesType(1-seriesCount)[area]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
+        data-vis-attrs1="group.chart;title;unit;showLegend[true]/checkbox;showMenu[true]/checkbox;chart1Height[48]/slider,1,100,1;chart2Height[48]/slider,1,100,1;chartspacing[4]/slider,0,200,1;"
+        data-vis-attrs2="normalizeDate[no]/select,no,hour,day,week,month,year;group.axis;yAxis1min;yAxis1max;yAxis2min;yAxis2max;;yAxis1tickamount/number;"
+        data-vis-attrs3="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m,ytd,1y,all;"
 		
 		
         data-vis-set="photovoltaikcharts"
@@ -259,14 +239,10 @@ $(function() {
         class="vis-tpl"
         data-vis-type="history" 
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev4.png"></img>'
-        data-vis-attrs="navhistoryoid/hid/onHidChanged;navinstance/history;navmultiplicator[1];navigatorRange[3]/slider,0,100,1;"
-        data-vis-attrs0="series1historyoid/hid/onHidChanged;instance1/history;series1label;multiplicator1[1];series1color[#FF5A33]/color;series1Type[areaspline]/select,area,areaspline,line,spline,column,bar;series1linewidth[1]/number;series1hoverlinewidth[2]/number;series1step/select,no,left,center,right;series1opacity[30]/slider,1,100,1;series1axis[0]/select,0,1,2;series1stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs1="series2historyoid/hid/onHidChanged;instance2/history;series2label;multiplicator2[1];series2color[#2f7ed8]/color;series2Type[areaspline]/select,area,areaspline,line,spline,column,bar;series2linewidth[1]/number;series2hoverlinewidth[2]/number;series2step/select,no,left,center,right;series2opacity[30]/slider,1,100,1;series2axis[0]/select,0,1,2;series2stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs2="series3historyoid/hid/onHidChanged;instance3/history;series3label;multiplicator3[1];series3color[#0d233a]/color;series3Type[areaspline]/select,area,areaspline,line,spline,column,bar;series3linewidth[1]/number;series3hoverlinewidth[2]/number;series3step/select,no,left,center,right;series3opacity[30]/slider,1,100,1;series3axis[1]/select,0,1,2;series3stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs3="series4historyoid/hid/onHidChanged;instance4/history;series4label;multiplicator4[1];series4color[#334DFF]/color;series4Type[areaspline]/select,area,areaspline,line,spline,column,bar;series4linewidth[1]/number;series4hoverlinewidth[2]/number;series4step/select,no,left,center,right;series4opacity[30]/slider,1,100,1;series4axis[1]/select,0,1,2;series4stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs4="series5historyoid/hid/onHidChanged;instance5/history;series5label;multiplicator5[1];series5color[#334DFF]/color;series5Type[line]/select,area,areaspline,line,spline,column,bar;series5linewidth[1]/number;series5hoverlinewidth[2]/number;series5step/select,no,left,center,right;series5opacity[30]/slider,1,100,1;series5axis[2]/select,0,1,2;series5stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs5="title;unit;xAxisLabel1;xAxisLabel2;xAxisLabel3;showLegend[true]/checkbox;showMenu[true]/checkbox;chart1Height[20]/slider,1,100,1;chart2Height[40]/slider,1,100,1;chart3Height[30]/slider,1,100,1;chartspacing[5]/slider,0,200,1;"
-        data-vis-attrs6="zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number;yAxis2min;yAxis2max;yAxis2Categories;yAxis2tickamount/number;yAxis3min;yAxis3max;yAxis3Categories;yAxis3tickamount/number"
+        data-vis-attrs="group.navigator;navhistoryoid/hid/onHidChanged;navinstance/history;navmultiplicator[1];navigatorRange[3]/slider,0,100,1;"
+		data-vis-attrs0="seriesCount[1]/number,1,20,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1,2;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
+        data-vis-attrs1="group.chart;title;unit;xAxisLabel1;xAxisLabel2;xAxisLabel3;showLegend[true]/checkbox;showMenu[true]/checkbox;chart1Height[20]/slider,1,100,1;chart2Height[40]/slider,1,100,1;chart3Height[30]/slider,1,100,1;chartspacing[5]/slider,0,200,1;"
+        data-vis-attrs2="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;group.axis;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number;yAxis2min;yAxis2max;yAxis2Categories;yAxis2tickamount/number;yAxis3min;yAxis3max;yAxis3Categories;yAxis3tickamount/number"
 		
 		
         data-vis-set="photovoltaikcharts"
@@ -290,14 +266,10 @@ $(function() {
         class="vis-tpl"
         data-vis-type="history" 
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev5.png"></img>'
-        data-vis-attrs="series1historyoid/hid/onHidChanged;instance1/history;series1label;multiplicator1[1];series1color[#FF5A33]/color;series1Type[areaspline]/select,area,areaspline,line,spline,column,bar;series1linewidth[1]/number;series1hoverlinewidth[2]/number;series1step/select,no,left,center,right;series1opacity[30]/slider,1,100,1;series1stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs0="series2historyoid/hid/onHidChanged;instance2/history;series2label;multiplicator2[1];series2color[#2f7ed8]/color;series2Type[areaspline]/select,area,areaspline,line,spline,column,bar;series2linewidth[1]/number;series2hoverlinewidth[2]/number;series2step/select,no,left,center,right;series2opacity[30]/slider,1,100,1;series2stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs1="series3historyoid/hid/onHidChanged;instance3/history;series3label;multiplicator3[1];series3color[#0d233a]/color;series3Type[areaspline]/select,area,areaspline,line,spline,column,bar;series3linewidth[1]/number;series3hoverlinewidth[2]/number;series3step/select,no,left,center,right;series3opacity[30]/slider,1,100,1;series3stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs2="series4historyoid/hid/onHidChanged;instance4/history;series4label;multiplicator4[1];series4color[#334DFF]/color;series4Type[areaspline]/select,area,areaspline,line,spline,column,bar;series4linewidth[1]/number;series4hoverlinewidth[2]/number;series4step/select,no,left,center,right;series4opacity[30]/slider,1,100,1;series4stacking[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs3="title;unit;showLegend[true]/checkbox;showMenu[true]/checkbox;"
-        data-vis-attrs4="zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;zoomoid/id;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number"
 		
-		
+		data-vis-attrs="seriesCount[1]/number,1,20,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
+        data-vis-attrs0="group.chart;title;unit;showLegend[true]/checkbox;showMenu[true]/checkbox;"
+        data-vis-attrs1="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;zoomoid/id;group.axis;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number"
         data-vis-set="photovoltaikcharts"
         data-vis-name="Time series chart 3"
 		data-vis-update-style="true"

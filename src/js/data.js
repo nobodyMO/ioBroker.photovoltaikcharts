@@ -1,10 +1,13 @@
 'use strict';
 
-function readOneChart(seriesData,id,instance,currentId,multiplicator, index, callback,mode,startdate) {
+function readOneChart(seriesData,id,instance,currentId,multiplicator, index, callback,mode,startdate,seriesCount) {
 
     var option = {};
 	var eventDate;
 	var currentYear=new Date ().getFullYear();
+	var startYear=new Date (startdate).getFullYear();
+	
+	var numberOfYears=currentYear - startYear + 1;
 	option.start=startdate;
 	option.end=(new Date(currentYear, 11, 31,23,59)).getTime();
     option.instance  = instance;
@@ -21,9 +24,9 @@ function readOneChart(seriesData,id,instance,currentId,multiplicator, index, cal
             for (var i = 0; i < res.length; i++) {
 				eventDate=new Date (res[i].ts);
 				if (mode===1){
-					seriesData[(2-currentYear+eventDate.getFullYear())*2 + index].data[eventDate.getMonth()]=(res[i].val || 0) * multiplicator;
+					seriesData[(eventDate.getFullYear()-startYear)*(seriesCount) + index].data[eventDate.getMonth()]=(res[i].val || 0) * multiplicator;
 				} else {
-					seriesData[index].data[4 - currentYear + eventDate.getFullYear()]=(res[i].val || 0) *multiplicator;
+					seriesData[index].data[numberOfYears-1 - currentYear + eventDate.getFullYear()]=(res[i].val || 0) *multiplicator;
 					
 				}
 			} 	
@@ -33,9 +36,9 @@ function readOneChart(seriesData,id,instance,currentId,multiplicator, index, cal
 
         if (currentId) {
 			if (mode===1){
-				seriesData[4 + index].data[(new Date ()).getMonth()]=(vis.states[currentId + '.val'] || 0) * multiplicator;
+				seriesData[(currentYear-startYear)*(seriesCount) + index].data[(new Date ()).getMonth()]=(vis.states[currentId + '.val'] || 0) * multiplicator;
 			} else {
-				seriesData[index].data[4]=(vis.states[currentId + '.val']|| 0) * multiplicator;
+				seriesData[index].data[numberOfYears-1]=(vis.states[currentId + '.val']|| 0) * multiplicator;
 			}		
 		};
   	    if (callback) callback();
@@ -53,7 +56,7 @@ function _readData(seriesData,oidList,callback, j,mode,startdate) {
 				setTimeout(function () {
 					_readData(seriesData,oidList,callback, j + 1,mode,startdate);
 				}, 10);
-			},mode,startdate);
+			},mode,startdate,oidList.length);
 		}else{
             setTimeout(function () {
                 _readData(seriesData,oidList,callback, j + 1,mode,startdate);
@@ -173,7 +176,12 @@ function readOneLineRange(chart,id,instance,currentId,multiplicator, index,mode,
         }
 
         if (currentId) {
-			data.push ([normalizeDate(new Date (),mode).getTime(),(vis.states[currentId + '.val']|| 0) * multiplicator]);
+			console.log ('Add current value for ' + currentId + ': date ' + normalizeDate(new Date (),mode).getTime() + 'value ' + vis.states[currentId + '.val']);
+			if (data[data.length-1][0]== normalizeDate(new Date (),mode).getTime()){
+				data[data.length-1][1]=(vis.states[currentId + '.val']|| 0) * multiplicator;
+			} else {
+				data.push ([normalizeDate(new Date (),mode).getTime(),(vis.states[currentId + '.val']|| 0) * multiplicator]);
+			}
 		};
 		if (virtualEnd>end) data.push([virtualEnd,0]);
 		chart.series[index].setData (data,false);
@@ -715,7 +723,7 @@ function handler(event) {
 
 	  
 	vis.binds.photovoltaikcharts = {
-		version: "1.0.1",
+		version: "1.0.8",
 		updateIntervalHandler:[],
 		delayedRefreshHandler:[],
 		
@@ -831,61 +839,45 @@ function handler(event) {
 				targetArray =data.target.split (',');
 			}								
 			
-			oidList =[
-							{id:0, historyOID:data.series1historyoid,instance:data.instance1,currentOID:data.series1currentoid,multiplicator:parseFloat(data.multiplicator1) || 1 },
-							{id:1, historyOID:data.series2historyoid,instance:data.instance2,currentOID:data.series2currentoid,multiplicator:parseFloat(data.multiplicator2) || 1 }
-						 ];
+			oidList =[];
+			seriesData=[];
+			var j=0;
+			var k;
+			for (k=1;k<=data.seriesCount;k++){
+				if (data['serieshistoryoid'+k] && data ['instance'+ k ]){
+					oidList.push ({id:j, historyOID:data['serieshistoryoid' + k],instance:data ['instance'+ k ],currentOID:data ['seriescurrentoid' + k],  multiplicator:parseFloat(data ['multiplicator'+ k ]) || 1,lastX:0 });					
+					j++;
+				}
+			}
 
 			var today = new Date();
+			var numberOfYears=data.numberOfYears || 3;
+
 			var year = today.getFullYear();
 			var targetData = [[0,0,0],[0.8,0,0],[1.7,0,0],[2.6,0,0],[3.5,0,0],[4.7,0,0],[5.7,0,0],[6.7,0,0],[7.6,0,0],[8.6,0,0],[9.5,0,0],[10.4,0,0],[11.4,0,0]];
 			var categories = [year.toString(), (year-1).toString(), (year-2).toString()];
+			var categories = [];
+			seriesData=[];
+			for (var i=0;i<numberOfYears;i++){
+				categories.push (year-i);
+				
+				for (k=1;k<=data.seriesCount;k++){
+					if (data['serieshistoryoid'+k] && data ['instance'+ k ]){
+						seriesData.push ({
+							name: (data['serieslabel' + k] || '') + ' ' + (year-numberOfYears+i+1).toString().substr(-2),
+							data: [0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0],
+							stack: numberOfYears-i-1,
+							color: data['yearcolor'+ k + (numberOfYears-i) ] || undefined,
+							lineWidth: data['serieslinewidth'+ k] || 1,
+							fillOpacity: (data['seriesopacity'+k]? parseFloat(data['seriesopacity'+k])/100 : 0.3),
+							type: data['seriesType'+k] || 'column',
+							opacity: 0.9
+
+						});
+					}
+				}
+			};
 			
-			seriesData=[{
-					name: (data.series1label || 'E') + ' ' + (year-2).toString().substr(-2),
-					data: [0, 0, 0, 0, 0,0, 0, 0, 0,0, 0, 0],
-					stack: 2,
-					color: data.year3color2 ||'#2f7ed8',
-					opacity: 0.9       
-
-				}, {
-					name: (data.series2label || 'V') + ' ' + (year-2).toString().substr(-2),
-					data: [0, 0, 0, 0, 0,0, 0, 0, 0,0, 0, 0],
-					stack: 2,
-					color: data.year3color1 || '#0d233a',
-					opacity: 0.9
-
-				},{
-					name: (data.series1label || 'E') + ' ' + (year-1).toString().substr(-2),
-					data: [0, 0, 0, 0, 0,0, 0, 0, 0,0, 0, 0],
-					stack: 1,
-					color: data.year2color2 ||'#FE642E',
-					showInLegend: true,
-					opacity: 0.9
-				}, {
-					name: (data.series2label || 'V') + ' ' + (year-1).toString().substr(-2),
-					data: [0, 0, 0, 0, 0,0, 0, 0, 0,0, 0, 0],
-					stack: 1,
-					color: data.year2color1 || '#FF4000',
-					showInLegend: true,
-					opacity: 0.9
-
-				},{
-					name: (data.series1label || 'E') + ' ' + year.toString().substr(-2),
-					data: [0, 0, 0, 0, 0,0, 0, 0, 0,0, 0, 0],
-					stack: 0,
-					color: data.year1color2 || '#F7D358',
-					showInLegend: true,
-					opacity: 0.9
-
-				}, {
-					name: (data.series2label || 'V') + ' ' + year.toString().substr(-2),
-					data: [0, 0, 0, 0, 0,0, 0, 0, 0,0, 0, 0],
-					stack: 0,
-					color: data.year1color1 || '#DBA901',
-					showInLegend: true,
-					opacity: 0.9
-				}];
 			if (Array.isArray(targetArray)) {
 				for (var index = 0; index < targetArray.length; index++) {
 					targetData [index][1]=parseFloat(targetArray[index]);
@@ -989,34 +981,35 @@ function handler(event) {
 						}
 				   });						
 
-			 },0,1,(new Date(year-2, 0, 1)).getTime());
+			 },0,1,(new Date(year-numberOfYears+1, 0, 1)).getTime());
+
+            function findOid (iod){
+				for (var i=0;i<	oidList.length;i++){
+					if (oidList[i].currentOID + '.val'==iod) return i;
+				}
+			};
+			
+
 			// subscribe on updates of value
-			function onChangeSeries1(e, newVal, oldVal) {
-				if (!chart) {
+			
+			function onChangeSeries (e, newVal, oldVal) {
+				if (!chart || newVal==oldVal) {
 					return;
 				}
-				chart.series[4].data[(new Date ()).getMonth()].update((parseFloat(newVal) || 0) * oidList[0].multiplicator); 
-			};
+				var id=findOid(e.type);
+				
+				chart.series[(numberOfYears-1)* oidList.length +id ].data[(new Date ()).getMonth()].update((parseFloat(newVal) || 0) * oidList[id].multiplicator);				
+			}
 
-			function onChangeSeries2(e, newVal, oldVal) {
-				if (!chart) {
-					return;
-				}
-				chart.series[5].data[(new Date ()).getMonth()].update((parseFloat(newVal) || 0) * oidList[1].multiplicator); 
-			};
+			for (var i=0;i<oidList.length;i++){
+				if (oidList[i].currentOID) {
+					console.log ('register on changes for ' + oidList[i].currentOID);
+					vis.states.bind(oidList[i].currentOID + '.val', onChangeSeries);
+					$div.data('bound', [oidList[i].currentOID + '.val']);
+					$div.data('bindHandler', onChangeSeries);
+				}			
+			}
 
-
-
-			if (data.series1currentoid) {
-				vis.states.bind(data.series1currentoid + '.val', onChangeSeries1);
-				$div.data('bound', [data.series1currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries1);
-			}			
-			if (data.series2currentoid) {
-				vis.states.bind(data.series2currentoid + '.val', onChangeSeries2);
-				$div.data('bound', [data.series2currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries2);
-			}			
 		},
 
 		createYearlyWidget: function (widgetID, view, data, style) {
@@ -1041,51 +1034,40 @@ function handler(event) {
 			if (typeof sysLang !== 'undefined') {
 				systemLang = sysLang || 'en';
 			}
-			
-			oidList =[
-							{id:0, historyOID:data.series1historyoid,instance:data.instance1,currentOID:data.series1currentoid,multiplicator:parseFloat(data.multiplicator1) || 1 },
-							{id:1, historyOID:data.series2historyoid,instance:data.instance2,currentOID:data.series2currentoid,multiplicator:parseFloat(data.multiplicator2) || 1 },
-							{id:2, historyOID:data.series3historyoid,instance:data.instance3,currentOID:data.series3currentoid,multiplicator:parseFloat(data.multiplicator3) || 1 },
-							{id:3, historyOID:data.series4historyoid,instance:data.instance4,currentOID:data.series4currentoid,multiplicator:parseFloat(data.multiplicator4) || 1 },
-							{id:4, historyOID:data.series5historyoid,instance:data.instance5,currentOID:data.series5currentoid,multiplicator:parseFloat(data.multiplicator5) || 1 }
-						 ];
 
+			var numberOfYears=data.numberOfYears || 4;
 			var today = new Date();
 			var year = today.getFullYear();
-			var categories = [year-4,year-3,year-2,year-1,year];
-			
-			seriesData=[{
-					name: data.series1label,
-					data: [0, 0, 0, 0, 0],
-					color: data.series1color || '#2f7ed8',
-					opacity: 0.9       
+			var categories = [];
+			var defaultData = [];
+			for (var i=numberOfYears-1;i>=0;i--){
+				categories.push (year-i);
+				defaultData.push (0);
+			};
 
-				}, {
-					name: data.series2label,
-					data: [0, 0, 0, 0, 0],
-					color: data.series2color || '#0d233a',
-					opacity: 0.9
+			oidList =[];
+			seriesData=[];
+			var j=0;
+			var i;
+			for (i=1;i<=data.seriesCount;i++){
+				if (data['serieshistoryoid'+i] && data ['instance'+ i ]){
+					oidList.push ({id:j, historyOID:data['serieshistoryoid'+i],instance:data ['instance'+ i ],currentOID:data ['seriescurrentoid'+i],  multiplicator:parseFloat(data ['multiplicator'+ i ]) || 1,lastX:0 });
+					seriesData.push ({
+						name: data['serieslabel'+i] ,
+						data: defaultData.slice(0),
+						color: data['seriescolor'+i] || undefined,
+						lineWidth: data['serieslinewidth'+i] || 1,
+						fillOpacity: (data['seriesopacity'+i]? parseFloat(data['seriesopacity'+i])/100 : 0.3),
+						type: data['seriesType'+i] || 'column',
+						opacity: 0.9
 
-				}, {
-					name: data.series3label,
-					data: [0, 0, 0, 0, 0],
-					color: data.series3color || '#33FF3B',
-					opacity: 0.9
-
-				}, {
-					name: data.series4label,
-					data: [0, 0, 0, 0, 0],
-					color: data.series4color || '#FF8F33',
-					opacity: 0.9
-
-				}, {
-					name: data.series5label,
-					data: [0, 0, 0, 0, 0],
-					color: data.series5color || '#F433FF',
-					opacity: 0.9
-
+					});
+					
+					j++;
 				}
-				];
+			}
+			
+									
 			var plotLines=[];
 			if (data.target) {
 				plotLines.push ({color:"#33FF50",dashStyle:"Solid",label:data.targetName || 'Target',value:parseFloat(data.target),width:2});
@@ -1163,68 +1145,36 @@ function handler(event) {
 					}
 				});						
 
-			 },0,2,(new Date(year-4, 0, 1)).getTime());
+			 },0,2,(new Date(year-numberOfYears+1, 0, 1)).getTime());
+
+            function findOid (iod){
+				for (var i=0;i<	oidList.length;i++){
+					if (oidList[i].currentOID + '.val'==iod) return i;
+				}
+			};
+			
+
 			// subscribe on updates of value
-			function onChangeSeries1(e, newVal, oldVal) {
-				if (!chart) {
+			
+			function onChangeSeries (e, newVal, oldVal) {
+				if (!chart || newVal==oldVal) {
 					return;
 				}
-				chart.series[0].data[4].update((parseFloat(newVal) || 0) * oidList[0].multiplicator); 
-			};
+				var id=findOid(e.type);
+				var eventDate=normalizeDate (new Date (),data.normalizeDate);
+				console.log ('add new series ' + (id+1) + ' value :' + eventDate + '(' + eventDate.getTime() + ') - ' + newVal);
+				chart.series[id].data[numberOfYears-1].update((parseFloat(newVal) || 0) * oidList[id].multiplicator);				
+			}
 
-			function onChangeSeries2(e, newVal, oldVal) {
-				if (!chart) {
-					return;
-				}
-				chart.series[1].data[4].update((parseFloat(newVal) || 0) * oidList[1].multiplicator); 
-			};
-			function onChangeSeries3(e, newVal, oldVal) {
-				if (!chart) {
-					return;
-				}
-				chart.series[2].data[4].update((parseFloat(newVal) || 0) * oidList[2].multiplicator); 
-			};
-			function onChangeSeries4(e, newVal, oldVal) {
-				if (!chart) {
-					return;
-				}
-				chart.series[3].data[4].update((parseFloat(newVal) || 0) * oidList[3].multiplicator); 
-			};
-
-			function onChangeSeries5(e, newVal, oldVal) {
-				if (!chart) {
-					return;
-				}
-				chart.series[4].data[4].update((parseFloat(newVal) || 0) * oidList[4].multiplicator); 
-			};
-
-
-
-			if (data.series1currentoid) {
-				vis.states.bind(data.series1currentoid + '.val', onChangeSeries1);
-				$div.data('bound', [data.series1currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries1);
-			}			
-			if (data.series2currentoid) {
-				vis.states.bind(data.series2currentoid + '.val', onChangeSeries2);
-				$div.data('bound', [data.series2currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries2);
-			}			
-			if (data.series3currentoid) {
-				vis.states.bind(data.series3currentoid + '.val', onChangeSeries3);
-				$div.data('bound', [data.series3currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries3);
-			}			
-			if (data.series4currentoid) {
-				vis.states.bind(data.series4currentoid + '.val', onChangeSeries4);
-				$div.data('bound', [data.series4currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries4);
-			}			
-			if (data.series5currentoid) {
-				vis.states.bind(data.series5currentoid + '.val', onChangeSeries5);
-				$div.data('bound', [data.series5currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries5);
-			}			
+			for (var i=0;i<oidList.length;i++){
+				if (oidList[i].currentOID) {
+					console.log ('register on changes for ' + oidList[i].currentOID);
+					vis.states.bind(oidList[i].currentOID + '.val', onChangeSeries);
+					$div.data('bound', [oidList[i].currentOID + '.val']);
+					$div.data('bindHandler', onChangeSeries);
+				}			
+			}
+			 			 
 		},
 		
 		createTimeseriesWidget: function (widgetID, view, data, style) {
@@ -1260,19 +1210,19 @@ function handler(event) {
 			seriesData=[];
 			var j=0;
 			var i;
-			for (i=1;i<7;i++){
-				if (data['series'+ i + 'historyoid'] && data ['instance'+ i ]){
-					oidList.push ({id:j, historyOID:data['series'+ i + 'historyoid'],instance:data ['instance'+ i ],currentOID:data ['series'+ i + 'currentoid'],  multiplicator:parseFloat(data ['multiplicator'+ i ]) || 1,lastX:0 });
+			for (i=1;i<=data.seriesCount;i++){
+				if (data['serieshistoryoid'+i] && data ['instance'+ i ]){
+					oidList.push ({id:j, historyOID:data['serieshistoryoid'+i],instance:data ['instance'+ i ],currentOID:data ['seriescurrentoid'+i],  multiplicator:parseFloat(data ['multiplicator'+ i ]) || 1,lastX:0 });
 					seriesData.push ({
-						name: data['series' + i +'label'] ,
+						name: data['serieslabel'+i] ,
 						data: [],
-						color: data['series' + i + 'color'] || '#FF5A33',
-						lineWidth: data['series' + i + 'linewidth'] || 1,
-						fillOpacity: (data['series' + i + 'opacity']? parseFloat(data['series' + i + 'opacity'])/100 : 0.3),
-						type: data['series' + i + 'Type'] || 'areaspline',
-						yAxis:(data['series' + i + 'axis']? parseInt(data['series' + i + 'axis']): 0),
-						step: (data['series' + i +'step'] && data['series' + i +'step']!='no'?data['series' + i +'step']: undefined),
-						stacking: (data['series' + i +'stacking'] && data['series' + i +'stacking']!='no' ? data['series' + i +'stacking'] :undefined),
+						color: data['seriescolor'+i] || '#FF5A33',
+						lineWidth: data['serieslinewidth'+i] || 1,
+						fillOpacity: (data['seriesopacity'+i]? parseFloat(data['seriesopacity'+i])/100 : 0.3),
+						type: data['seriesType'+i] || 'areaspline',
+						yAxis:(data['seriesaxis'+i]? parseInt(data['seriesaxis'+i]): 0),
+						step: (data['seriesstep'+i] && data['seriesstep'+i]!='no'?data['seriesstep'+i]: undefined),
+						stacking: (data['seriesstacking'+i] && data['seriesstacking'+i]!='no' ? data['seriesstacking'+i] :undefined),
 						dataGrouping: {
 							enabled: true,
 							approximation:"high",
@@ -1281,7 +1231,7 @@ function handler(event) {
 						states: {	
 							hover: {
 								enabled: true,
-								lineWidth: data['series' + i + 'hoverlinewidth'] || 1,
+								lineWidth: data['serieshoverlinewidth'+i] || 1,
 							}
 						},
 						pointInterval:10000
@@ -1593,175 +1543,78 @@ function handler(event) {
 			},10);
 
 
+            function findOid (iod){
+				for (var i=0;i<	oidList.length;i++){
+					if (oidList[i].currentOID + '.val'==iod) return i;
+				}
+			};
+			
 
 			// subscribe on updates of value
 			
-			function onChangeSeries1ts(e, newVal, oldVal) {
+			function onChangeSeries (e, newVal, oldVal) {
 				if (!chart || newVal==oldVal) {
 					return;
 				}
+				var id=findOid(e.type);
 				var eventDate=normalizeDate (new Date (),data.normalizeDate);
-				console.log ('add new series 1 value :' + eventDate + '(' + eventDate.getTime() + ') - ' + newVal);
-				if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points [chart.navigator.series[0].points.length-1]) console.log ('Last old x:' + chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x);
+				console.log ('add new series ' + (id+1) + ' value :' + eventDate + '(' + eventDate.getTime() + ') - ' + newVal);
+				if (id==0) {
 
-				if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points [chart.navigator.series[0].points.length-1] && chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x==eventDate.getTime()){
-					chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].update((parseFloat(newVal) || 0) * oidList[0].multiplicator);
-				} else {
-					chart.navigator.series[0].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[0].multiplicator]); 
-				}
+					if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points [chart.navigator.series[0].points.length-1]) console.log ('Last old x:' + chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x);
 
-				if (chart.series[0].points && chart.series[0].points[chart.series[0].points.length-1] && chart.series[0].points[chart.series[0].points.length-1].x==eventDate.getTime()){
-					console.log ('Update series 1');			
-					chart.series[0].points[chart.series[0].points.length-1].update((parseFloat(newVal) || 0) * oidList[0].multiplicator);
-				} else {
-				    console.log ('Add new value to series 1');
-					if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
-						var oldExtremes=chart.xAxis[0].getExtremes();
-						console.log ('Old extremes: ' + JSON.stringify (oldExtremes));
-						var oldLastX=chart.navigator.xAxis.max ;
-						console.log ('Last X: ' + new Date (oldLastX));
-						console.log ('CompareX: ' + JSON.stringify (oldExtremes));
-						console.log ('oldExtremes max: ' + new Date (oldExtremes.max));
-						if (oldExtremes.max > oldLastX-(10*60*1000)){
-							//chart.xAxis[0].setExtremes(oldExtremes.min+eventDate.getTime()-oldExtremes.max,eventDate.getTime());
-							chart.series[0].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[0].multiplicator]); 
-							var newMaxX=chart.navigator.xAxis.max;
-							if (oldLastX!=newMaxX) chart.xAxis[0].setExtremes(oldExtremes.min+newMaxX-oldExtremes.max,newMaxX);
+					if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points [chart.navigator.series[0].points.length-1] && chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x==eventDate.getTime()){
+						chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].update((parseFloat(newVal) || 0) * oidList[id].multiplicator);
+					} else {
+						chart.navigator.series[0].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[id].multiplicator]); 
+					}
 
+					if (chart.series[id].points && chart.series[id].points[chart.series[id].points.length-1] && chart.series[id].points[chart.series[id].points.length-1].x==eventDate.getTime()){
+						console.log ('Update series ' + (id+1));			
+						chart.series[id].points[chart.series[id].points.length-1].update((parseFloat(newVal) || 0) * oidList[id].multiplicator);
+					} else {
+						console.log ('Add new value to series 1');
+						if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
+							var oldExtremes=chart.xAxis[0].getExtremes();
+							console.log ('Old extremes: ' + JSON.stringify (oldExtremes));
+							var oldLastX=chart.navigator.xAxis.max ;
+							console.log ('Last X: ' + new Date (oldLastX));
+							console.log ('CompareX: ' + JSON.stringify (oldExtremes));
+							console.log ('oldExtremes max: ' + new Date (oldExtremes.max));
+							if (oldExtremes.max > oldLastX-(10*60*1000)){
+								//chart.xAxis[0].setExtremes(oldExtremes.min+eventDate.getTime()-oldExtremes.max,eventDate.getTime());
+								chart.series[id].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[id].multiplicator]); 
+								var newMaxX=chart.navigator.xAxis.max;
+								if (oldLastX!=newMaxX) chart.xAxis[0].setExtremes(oldExtremes.min+newMaxX-oldExtremes.max,newMaxX);
+
+							}
 						}
 					}
+				} else {
+					if (chart.series[id].points && chart.series[1].points[chart.series[id].points.length-1] && chart.series[id].points[chart.series[id].points.length-1].x==eventDate.getTime()){
+						chart.series[id].points[chart.series[id].points.length-1].update((parseFloat(newVal) || 0) * oidList[id].multiplicator);
+					} else {   				
+						if (chart && chart.xAxis && typeof chart.xAxis[1] != 'undefined') {
+							var oldExtremes=chart.xAxis[1].getExtremes();
+							var oldLastX=(chart.series && chart.series[1].points && chart.series[id].points.length>0 && chart.series[id].points[chart.series[id].points.length-1] && chart.series[id].points[chart.series[id].points.length-1].x? chart.series[id].points[chart.series[id].points.length-1].x:0);
+							if (oldExtremes.max > oldLastX-(10*60*1000)){
+								chart.series[id].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[id].multiplicator]); 
+							}
+						}					
+					}
+					
 				}
 				
-			};
+			}
 
-			function onChangeSeries2ts(e, newVal, oldVal) {
-				console.log ('Update series 2');			
-				if (!chart || newVal==oldVal) {
-					return;
-				}
-				var eventDate=normalizeDate (new Date (),data.normalizeDate);
-				if (chart.series[1].points && chart.series[1].points[chart.series[1].points.length-1] && chart.series[1].points[chart.series[1].points.length-1].x==eventDate.getTime()){
-					chart.series[1].points[chart.series[1].points.length-1].update((parseFloat(newVal) || 0) * oidList[1].multiplicator);
-				} else {   				
-					if (chart && chart.xAxis && typeof chart.xAxis[1] != 'undefined') {
-						var oldExtremes=chart.xAxis[1].getExtremes();
-						var oldLastX=(chart.series && chart.series[1].points && chart.series[1].points.length>0 && chart.series[1].points[chart.series[1].points.length-1] && chart.series[1].points[chart.series[1].points.length-1].x? chart.series[1].points[chart.series[1].points.length-1].x:0);
-						if (oldExtremes.max > oldLastX-(10*60*1000)){
-							chart.series[1].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[1].multiplicator]); 
-						}
-					}					
-				}
-			};
-			function onChangeSeries3ts(e, newVal, oldVal) {
-				console.log ('Update series 3');			
-				if (!chart || newVal==oldVal) {
-					return;
-				}
-				var eventDate=normalizeDate (new Date (),data.normalizeDate);
-				if (chart.series[2].points && chart.series[2].points[chart.series[2].points.length-1] && chart.series[2].points[chart.series[2].points.length-1].x==eventDate.getTime()){
-					chart.series[2].points[chart.series[2].points.length-1].update((parseFloat(newVal) || 0) * oidList[2].multiplicator);
-				} else {   					
-					if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
-						var oldExtremes=chart.xAxis[0].getExtremes();
-						var oldLastX=(chart.series && chart.series[2].points && chart.series[2].points.length>0 && chart.series[2].points[chart.series[2].points.length-1] && chart.series[2].points[chart.series[2].points.length-1].x? chart.series[2].points[chart.series[2].points.length-1].x:0);
-						if (oldExtremes.max > oldLastX-(10*60*1000)){
-							chart.series[2].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[2].multiplicator]); 
-						}					
-					}
-				}
-			};
-			function onChangeSeries4ts(e, newVal, oldVal) {
-				console.log ('Update series 4');			
-				if (!chart || newVal==oldVal) {
-					return;
-				}
-				var eventDate=normalizeDate (new Date (),data.normalizeDate);
-				if (chart.series[3].points && chart.series[3].points[chart.series[3].points.length-1] && chart.series[3].points[chart.series[3].points.length-1].x==eventDate.getTime()){
-					chart.series[3].points[chart.series[3].points.length-1].update((parseFloat(newVal) || 0) * oidList[3].multiplicator);
-				} else {
-					if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
-						var oldExtremes=chart.xAxis[0].getExtremes();
-						var oldLastX=(chart.series && chart.series[3].points && chart.series[3].points.length>0 && chart.series[3].points[chart.series[3].points.length-1] && chart.series[3].points[chart.series[3].points.length-1].x? chart.series[3].points[chart.series[3].points.length-1].x:0);
-						if (oldExtremes.max > oldLastX-(10*60*1000)){
-							chart.series[3].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[3].multiplicator]); 
-						}
-					}					
-				}
-			};
-			function onChangeSeries5ts(e, newVal, oldVal) {
-				console.log ('Update series 5');			
-				if (!chart || newVal==oldVal) {
-					return;
-				}
-				var eventDate=normalizeDate (new Date (),data.normalizeDate);
-				if (chart.series[4].points && chart.series[4].points[chart.series[4].points.length-1] && chart.series[4].points[chart.series[4].points.length-1].x==eventDate.getTime()){
-					chart.series[4].points[chart.series[4].points.length-1].update((parseFloat(newVal) || 0) * oidList[4].multiplicator);
-				} else {
-   					if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
-						var oldExtremes=chart.xAxis[0].getExtremes();
-						var oldLastX=(chart.series && chart.series[4].points && chart.series[4].points.length>0 && chart.series[4].points[chart.series[4].points.length-1] && chart.series[4].points[chart.series[4].points.length-1].x? chart.series[4].points[chart.series[4].points.length-1].x:0);
-						if (oldExtremes.max > oldLastX-(10*60*1000)){
-							chart.series[4].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[4].multiplicator]); 
-						}					
-					}
-				}
-			};
-			function onChangeSeries6ts(e, newVal, oldVal) {
-				console.log ('Update series 6');			
-				if (!chart || newVal==oldVal) {
-					return;
-				}
-				var eventDate=normalizeDate (new Date (),data.normalizeDate);
-				if (chart.series[5].points && chart.series[5].points[chart.series[5].points.length-1] && chart.series[5].points[chart.series[5].points.length-1].x==eventDate.getTime()){
-					chart.series[5].points[chart.series[5].points.length-1].update((parseFloat(newVal) || 0) * oidList[5].multiplicator);
-				} else {
-					if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined'){
-						var oldExtremes=chart.xAxis[0].getExtremes();
-						var oldLastX=(chart.series && chart.series[5].points && chart.series[5].points.length>0 && chart.series[5].points[chart.series[5].points.length-1] && chart.series[5].points[chart.series[5].points.length-1].x? chart.series[5].points[chart.series[5].points.length-1].x:0);
-						if (oldExtremes.max > oldLastX-(10*60*1000)){
-							chart.series[5].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[5].multiplicator]); 
-						}					
-					}
-				}
-			};
-
-
-			if (data.series1currentoid) {
-				console.log ('register on changes for ' + data.series1currentoid);
-				vis.states.bind(data.series1currentoid + '.val', onChangeSeries1ts);
-				$div.data('bound', [data.series1currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries1ts);
-			}			
-			if (data.series2currentoid) {
-				console.log ('register on changes for ' + data.series2currentoid);
-				vis.states.bind(data.series2currentoid + '.val', onChangeSeries2ts);
-				$div.data('bound', [data.series2currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries2ts);
-			}			
-			if (data.series3currentoid) {
-				console.log ('register on changes for ' + data.series3currentoid);			
-				vis.states.bind(data.series3currentoid + '.val', onChangeSeries3ts);
-				$div.data('bound', [data.series3currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries3ts);
-			}			
-			if (data.series4currentoid) {
-				console.log ('register on changes for ' + data.series4currentoid);
-				vis.states.bind(data.series4currentoid + '.val', onChangeSeries4ts);				
-				$div.data('bound', [data.series4currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries4ts);
-			}			
-			if (data.series5currentoid) {
-				console.log ('register on changes for ' + data.series5currentoid);
-				vis.states.bind(data.series5currentoid + '.val', onChangeSeries5ts);
-				$div.data('bound', [data.series5currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries5ts);
-			}			
-			if (data.series6currentoid) {
-				console.log ('register on changes for ' + data.series6currentoid);
-				vis.states.bind(data.series6currentoid + '.val', onChangeSeries6ts);
-				$div.data('bound', [data.series6currentoid + '.val']);
-				$div.data('bindHandler', onChangeSeries6ts);
-			}			
+			for (var i=0;i<oidList.length;i++){
+				if (oidList[i].currentOID) {
+					console.log ('register on changes for ' + oidList[i].currentOID);
+					vis.states.bind(oidList[i].currentOID + '.val', onChangeSeries);
+					$div.data('bound', [oidList[i].currentOID + '.val']);
+					$div.data('bindHandler', onChangeSeries);
+				}			
+			}
 		},
 		
 		
@@ -1800,20 +1653,20 @@ function handler(event) {
 			seriesData=[];
 			var j=0;
 			var i;
-			for (i=1;i<6;i++){
-				if (data['series'+ i + 'historyoid'] && data ['instance'+ i ]){
-					oidList.push ({id:j, historyOID:data['series'+ i + 'historyoid'],instance:data ['instance'+ i ],multiplicator:parseFloat(data ['multiplicator'+ i ]) || 1,lastX:0 });
+			for (i=1;i<=data.seriesCount;i++){
+				if (data['serieshistoryoid'+i] && data ['instance'+ i ]){
+					oidList.push ({id:j, historyOID:data['serieshistoryoid'+ i],instance:data ['instance'+ i ],multiplicator:parseFloat(data ['multiplicator'+ i ]) || 1,lastX:0 });
 					
 					seriesData.push ({
-						name: data['series' + i +'label'] ,
+						name: data['serieslabel'+ i] ,
 						data: [],
-						color: data['series' + i + 'color'] || '#FF5A33',
-						lineWidth: data['series' + i + 'linewidth'] || 1,
-						fillOpacity: (data['series' + i + 'opacity']? parseFloat(data['series' + i + 'opacity'])/100 : 0.3),
-						type: data['series' + i + 'Type'] || 'areaspline',
-						yAxis:(data['series' + i + 'axis']? parseInt(data['series' + i + 'axis']): 0),
-						step: (data['series' + i +'step'] && data['series' + i +'step']!='no'?data['series' + i +'step']: undefined),
-						stacking: (data['series' + i +'stacking'] && data['series' + i +'stacking']!='no'  ? data['series' + i +'stacking'] :undefined),
+						color: data['seriescolor'+ i] || '#FF5A33',
+						lineWidth: data['serieslinewidth'+ i] || 1,
+						fillOpacity: (data['seriesopacity'+ i]? parseFloat(data['seriesopacity'+ i])/100 : 0.3),
+						type: data['seriesType'+ i] || 'areaspline',
+						yAxis:(data['seriesaxis'+ i]? parseInt(data['seriesaxis'+i]): 0),
+						step: (data['seriesstep'+ i] && data['seriesstep'+i]!='no'?data['seriesstep'+ i]: undefined),
+						stacking: (data['seriesstacking'+ i] && data['seriesstacking'+ i]!='no'  ? data['seriesstacking'+ i] :undefined),
 						dataGrouping: {
 							enabled: true,
 							approximation:"high",
@@ -1822,7 +1675,7 @@ function handler(event) {
 						states: {	
 							hover: {
 								enabled: true,
-								lineWidth: data['series' + i + 'hoverlinewidth'] || 1,
+								lineWidth: data['serieshoverlinewidth'+ i] || 1,
 							}
 						},
 						pointInterval:10000
@@ -2245,20 +2098,20 @@ function handler(event) {
 			var i;
 			var label;
 			
-			for (i=1;i<5;i++){
-				if (data['series'+ i + 'historyoid'] && data ['instance'+ i ]){
-					label=data['series' + i +'label'];				
-					oidList.push ({id:j, historyOID:data['series'+ i + 'historyoid'],instance:data ['instance'+ i ],multiplicator:parseFloat(data ['multiplicator'+ i ]) || 1,lastX:0 });
+			for (i=1;i<=data.seriesCount;i++){
+				if (data['serieshistoryoid'+i] && data ['instance'+ i ]){
+					label=data['serieslabel'+i];				
+					oidList.push ({id:j, historyOID:data['serieshistoryoid'+i],instance:data ['instance'+ i ],multiplicator:parseFloat(data ['multiplicator'+ i ]) || 1,lastX:0 });
 					
 					seriesData.push ({
 						name: label,
 						data: [],
-						color: data['series' + i + 'color'] || '#FF5A33',
-						lineWidth: data['series' + i + 'linewidth'] || 1,
-						fillOpacity: (data['series' + i + 'opacity']? parseFloat(data['series' + i + 'opacity'])/100 : 0.3),
-						type: data['series' + i + 'Type'] || 'areaspline',
-						step: (data['series' + i +'step'] && data['series' + i +'step']!='no'? data['series' + i +'step'] : undefined),
-						stacking: (data['series' + i +'stacking'] && data['series' + i +'stacking']!='no'  ? data['series' + i +'stacking'] : undefined),
+						color: data['seriescolor'+i] || '#FF5A33',
+						lineWidth: data['serieslinewidth'+i] || 1,
+						fillOpacity: (data['seriesopacity'+i]? parseFloat(data['seriesopacity'+i])/100 : 0.3),
+						type: data['seriesType'+i] || 'areaspline',
+						step: (data['seriesstep'+i] && data['seriesstep'+i]!='no'? data['seriesstep'+i] : undefined),
+						stacking: (data['seriesstacking'+i] && data['seriesstacking'+i]!='no'  ? data['seriesstacking'+i] : undefined),
 
 						dataGrouping: {
 							enabled: true,
@@ -2268,7 +2121,7 @@ function handler(event) {
 						states: {	
 							hover: {
 								enabled: true,
-								lineWidth: data['series' + i + 'hoverlinewidth'] || 1,
+								lineWidth: data['serieshoverlinewidth'+i] || 1,
 							}
 						},
 						pointInterval:10000
@@ -2355,7 +2208,7 @@ function handler(event) {
 								
 			
 			if (vis.language === 'de')Highcharts.setOptions(fbobj.highchartsOptions);
-			var help= vis.states[data.series1historyoid];
+			var help= vis.states[data.serieshistoryoid1];
 			chart = new Highcharts.stockChart(divId + widgetID, {
 				chart: {
 					width: $div.width()-2,
