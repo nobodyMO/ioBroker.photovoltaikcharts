@@ -177,7 +177,7 @@ function readOneLineRange(chart,id,instance,currentId,multiplicator, index,mode,
 
         if (currentId) {
 			console.log ('Add current value for ' + currentId + ': date ' + normalizeDate(new Date (),mode).getTime() + 'value ' + vis.states[currentId + '.val']);
-			if (data[data.length-1][0]== normalizeDate(new Date (),mode).getTime()){
+			if (data.length>0 && data[data.length-1][0]== normalizeDate(new Date (),mode).getTime()){
 				data[data.length-1][1]=(vis.states[currentId + '.val']|| 0) * multiplicator;
 			} else {
 				data.push ([normalizeDate(new Date (),mode).getTime(),(vis.states[currentId + '.val']|| 0) * multiplicator]);
@@ -813,6 +813,26 @@ function handler(event) {
 					},
 		scrollspeed:0.3,
 								
+								
+								
+		getUniqueOID: function (oidList) {
+			var result = [];
+			oidList.forEach(function(item) {
+				 if(result.indexOf(item.currentOID) < 0) {
+					 result.push(item.currentOID);
+				 }
+			});
+			return result;
+		},
+		
+		findOID: function findOid (oidList,iod){				
+			var result = [];
+			for (var i=0;i<	oidList.length;i++){
+				if (oidList[i].currentOID + '.val'==iod) result.push (i);
+			}
+			return result;			
+		},
+
 		createMonthlyWidget: function (widgetID, view, data, style) {
 			var seriesData = [];
 			var oidList = [];
@@ -983,7 +1003,17 @@ function handler(event) {
 
 			 },0,1,(new Date(year-numberOfYears+1, 0, 1)).getTime());
 
-            function findOid (iod){
+			function getUniqueOID (oidList) {
+				var result = [];
+				oidList.forEach(function(item) {
+					 if(result.indexOf(item.currentOID) < 0) {
+						 result.push(item.currentOID);
+					 }
+				});
+				return result;
+			}
+			
+            function findOid (oidList,iod){				
 				for (var i=0;i<	oidList.length;i++){
 					if (oidList[i].currentOID + '.val'==iod) return i;
 				}
@@ -996,16 +1026,19 @@ function handler(event) {
 				if (!chart || newVal==oldVal) {
 					return;
 				}
-				var id=findOid(e.type);
-				
-				chart.series[(numberOfYears-1)* oidList.length +id ].data[(new Date ()).getMonth()].update((parseFloat(newVal) || 0) * oidList[id].multiplicator);				
+				var ids=fbobj.findOID(oidList,e.type);
+				for (var i=0;i<ids.length;i++){				
+					chart.series[(numberOfYears-1)* oidList.length +ids[i]].data[(new Date ()).getMonth()].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator);				
+				}
 			}
+					
 
-			for (var i=0;i<oidList.length;i++){
-				if (oidList[i].currentOID) {
-					console.log ('register on changes for ' + oidList[i].currentOID);
-					vis.states.bind(oidList[i].currentOID + '.val', onChangeSeries);
-					$div.data('bound', [oidList[i].currentOID + '.val']);
+			var uniqueOID=fbobj.getUniqueOID (oidList);
+			for (var i=0;i<uniqueOID.length;i++){
+				if (uniqueOID[i]) {
+					console.log ('register on changes for ' + uniqueOID[i]);
+					vis.states.bind(uniqueOID[i] + '.val', onChangeSeries);
+					$div.data('bound', [uniqueOID[i] + '.val']);
 					$div.data('bindHandler', onChangeSeries);
 				}			
 			}
@@ -1147,12 +1180,7 @@ function handler(event) {
 
 			 },0,2,(new Date(year-numberOfYears+1, 0, 1)).getTime());
 
-            function findOid (iod){
-				for (var i=0;i<	oidList.length;i++){
-					if (oidList[i].currentOID + '.val'==iod) return i;
-				}
-			};
-			
+  
 
 			// subscribe on updates of value
 			
@@ -1160,17 +1188,21 @@ function handler(event) {
 				if (!chart || newVal==oldVal) {
 					return;
 				}
-				var id=findOid(e.type);
+				var ids=fbobj.findOID(oidList,e.type);
 				var eventDate=normalizeDate (new Date (),data.normalizeDate);
-				console.log ('add new series ' + (id+1) + ' value :' + eventDate + '(' + eventDate.getTime() + ') - ' + newVal);
-				chart.series[id].data[numberOfYears-1].update((parseFloat(newVal) || 0) * oidList[id].multiplicator);				
+				for (var i=0;i<ids.length;i++){				
+					console.log ('add new series ' + (ids[i]+1) + ' value :' + eventDate + '(' + eventDate.getTime() + ') - ' + newVal);
+					chart.series[ids[i]].data[numberOfYears-1].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator);				
+				}
 			}
 
-			for (var i=0;i<oidList.length;i++){
-				if (oidList[i].currentOID) {
-					console.log ('register on changes for ' + oidList[i].currentOID);
-					vis.states.bind(oidList[i].currentOID + '.val', onChangeSeries);
-					$div.data('bound', [oidList[i].currentOID + '.val']);
+
+			var uniqueOID=fbobj.getUniqueOID (oidList);
+			for (var i=0;i<uniqueOID.length;i++){
+				if (uniqueOID[i]) {
+					console.log ('register on changes for ' + uniqueOID[i]);
+					vis.states.bind(uniqueOID[i] + '.val', onChangeSeries);
+					$div.data('bound', [uniqueOID[i] + '.val']);
 					$div.data('bindHandler', onChangeSeries);
 				}			
 			}
@@ -1224,9 +1256,9 @@ function handler(event) {
 						step: (data['seriesstep'+i] && data['seriesstep'+i]!='no'?data['seriesstep'+i]: undefined),
 						stacking: (data['seriesstacking'+i] && data['seriesstacking'+i]!='no' ? data['seriesstacking'+i] :undefined),
 						dataGrouping: {
-							enabled: true,
+							enabled: (data['seriesType'+i]!='column' ? true: false),
 							approximation:"high",
-							units:fbobj.highchartsSeriesUnits							
+							units:(data['seriesType'+i]!='column' ? fbobj.highchartsSeriesUnits:undefined)
 						},
 						states: {	
 							hover: {
@@ -1542,12 +1574,6 @@ function handler(event) {
 				});
 			},10);
 
-
-            function findOid (iod){
-				for (var i=0;i<	oidList.length;i++){
-					if (oidList[i].currentOID + '.val'==iod) return i;
-				}
-			};
 			
 
 			// subscribe on updates of value
@@ -1556,65 +1582,68 @@ function handler(event) {
 				if (!chart || newVal==oldVal) {
 					return;
 				}
-				var id=findOid(e.type);
+				var ids=fbobj.findOID(oidList,e.type);
 				var eventDate=normalizeDate (new Date (),data.normalizeDate);
-				console.log ('add new series ' + (id+1) + ' value :' + eventDate + '(' + eventDate.getTime() + ') - ' + newVal);
-				if (id==0) {
+				for (var i=0;i<ids.length;i++){				
+					console.log ('add new series ' + (ids[i]+1) + ' value :' + eventDate + '(' + eventDate.getTime() + ') - ' + newVal);
+					if (ids[i]==0) {
 
-					if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points [chart.navigator.series[0].points.length-1]) console.log ('Last old x:' + chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x);
+						if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points [chart.navigator.series[0].points.length-1]) console.log ('Last old x:' + chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x);
 
-					if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points [chart.navigator.series[0].points.length-1] && chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x==eventDate.getTime()){
-						chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].update((parseFloat(newVal) || 0) * oidList[id].multiplicator);
-					} else {
-						chart.navigator.series[0].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[id].multiplicator]); 
-					}
+						if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points [chart.navigator.series[0].points.length-1] && chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x==eventDate.getTime()){
+							chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator);
+						} else {
+							chart.navigator.series[0].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator]); 
+						}
 
-					if (chart.series[id].points && chart.series[id].points[chart.series[id].points.length-1] && chart.series[id].points[chart.series[id].points.length-1].x==eventDate.getTime()){
-						console.log ('Update series ' + (id+1));			
-						chart.series[id].points[chart.series[id].points.length-1].update((parseFloat(newVal) || 0) * oidList[id].multiplicator);
-					} else {
-						console.log ('Add new value to series 1');
-						if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
-							var oldExtremes=chart.xAxis[0].getExtremes();
-							console.log ('Old extremes: ' + JSON.stringify (oldExtremes));
-							var oldLastX=chart.navigator.xAxis.max ;
-							console.log ('Last X: ' + new Date (oldLastX));
-							console.log ('CompareX: ' + JSON.stringify (oldExtremes));
-							console.log ('oldExtremes max: ' + new Date (oldExtremes.max));
-							if (oldExtremes.max > oldLastX-(10*60*1000)){
-								//chart.xAxis[0].setExtremes(oldExtremes.min+eventDate.getTime()-oldExtremes.max,eventDate.getTime());
-								chart.series[id].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[id].multiplicator]); 
-								var newMaxX=chart.navigator.xAxis.max;
-								if (oldLastX!=newMaxX) chart.xAxis[0].setExtremes(oldExtremes.min+newMaxX-oldExtremes.max,newMaxX);
+						if (chart.series[ids[i]].points && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1] && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].x==eventDate.getTime()){
+							console.log ('Update series ' + (ids[i]+1));			
+							chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator);
+						} else {
+							console.log ('Add new value to series 1');
+							if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
+								var oldExtremes=chart.xAxis[0].getExtremes();
+								console.log ('Old extremes: ' + JSON.stringify (oldExtremes));
+								var oldLastX=chart.navigator.xAxis.max ;
+								console.log ('Last X: ' + new Date (oldLastX));
+								console.log ('CompareX: ' + JSON.stringify (oldExtremes));
+								console.log ('oldExtremes max: ' + new Date (oldExtremes.max));
+								if (oldExtremes.max > oldLastX-(10*60*1000)){
+									//chart.xAxis[0].setExtremes(oldExtremes.min+eventDate.getTime()-oldExtremes.max,eventDate.getTime());
+									chart.series[ids[i]].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator]); 
+									var newMaxX=chart.navigator.xAxis.max;
+									if (oldLastX!=newMaxX) chart.xAxis[0].setExtremes(oldExtremes.min+newMaxX-oldExtremes.max,newMaxX);
 
+								}
 							}
 						}
+					} else {
+						if (chart.series[ids[i]].points && chart.series[1].points[chart.series[ids[i]].points.length-1] && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].x==eventDate.getTime()){
+							chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator);
+						} else {   				
+							if (chart && chart.xAxis && typeof chart.xAxis[1] != 'undefined') {
+								var oldExtremes=chart.xAxis[1].getExtremes();
+								var oldLastX=(chart.series && chart.series[1].points && chart.series[ids[i]].points.length>0 && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1] && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].x? chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].x:0);
+								if (oldExtremes.max > oldLastX-(10*60*1000)){
+									chart.series[ids[i]].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator]); 
+								}
+							}					
+						}
+						
 					}
-				} else {
-					if (chart.series[id].points && chart.series[1].points[chart.series[id].points.length-1] && chart.series[id].points[chart.series[id].points.length-1].x==eventDate.getTime()){
-						chart.series[id].points[chart.series[id].points.length-1].update((parseFloat(newVal) || 0) * oidList[id].multiplicator);
-					} else {   				
-						if (chart && chart.xAxis && typeof chart.xAxis[1] != 'undefined') {
-							var oldExtremes=chart.xAxis[1].getExtremes();
-							var oldLastX=(chart.series && chart.series[1].points && chart.series[id].points.length>0 && chart.series[id].points[chart.series[id].points.length-1] && chart.series[id].points[chart.series[id].points.length-1].x? chart.series[id].points[chart.series[id].points.length-1].x:0);
-							if (oldExtremes.max > oldLastX-(10*60*1000)){
-								chart.series[id].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[id].multiplicator]); 
-							}
-						}					
-					}
-					
 				}
-				
 			}
+			
 
-			for (var i=0;i<oidList.length;i++){
-				if (oidList[i].currentOID) {
-					console.log ('register on changes for ' + oidList[i].currentOID);
-					vis.states.bind(oidList[i].currentOID + '.val', onChangeSeries);
-					$div.data('bound', [oidList[i].currentOID + '.val']);
+			var uniqueOID=fbobj.getUniqueOID (oidList);
+			for (var i=0;i<uniqueOID.length;i++){
+				if (uniqueOID[i]) {
+					console.log ('register on changes for ' + uniqueOID[i]);
+					vis.states.bind(uniqueOID[i] + '.val', onChangeSeries);
+					$div.data('bound', [uniqueOID[i] + '.val']);
 					$div.data('bindHandler', onChangeSeries);
 				}			
-			}
+			}			
 		},
 		
 		
@@ -1668,9 +1697,9 @@ function handler(event) {
 						step: (data['seriesstep'+ i] && data['seriesstep'+i]!='no'?data['seriesstep'+ i]: undefined),
 						stacking: (data['seriesstacking'+ i] && data['seriesstacking'+ i]!='no'  ? data['seriesstacking'+ i] :undefined),
 						dataGrouping: {
-							enabled: true,
+							enabled: (data['seriesType'+i]!='column' ? true: false),
 							approximation:"high",
-							units:fbobj.highchartsSeriesUnits							
+							units:(data['seriesType'+i]!='column' ? fbobj.highchartsSeriesUnits:undefined)
 						},
 						states: {	
 							hover: {
@@ -2112,12 +2141,11 @@ function handler(event) {
 						type: data['seriesType'+i] || 'areaspline',
 						step: (data['seriesstep'+i] && data['seriesstep'+i]!='no'? data['seriesstep'+i] : undefined),
 						stacking: (data['seriesstacking'+i] && data['seriesstacking'+i]!='no'  ? data['seriesstacking'+i] : undefined),
-
 						dataGrouping: {
-							enabled: true,
+							enabled: (data['seriesType'+i]!='column' ? true: false),
 							approximation:"high",
-							units:fbobj.highchartsSeriesUnits							
-						},	
+							units:(data['seriesType'+i]!='column' ? fbobj.highchartsSeriesUnits:undefined)
+						},
 						states: {	
 							hover: {
 								enabled: true,

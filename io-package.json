@@ -3,6 +3,18 @@
         "name": "photovoltaikcharts",
         "version": "1.0.8",
         "news": {
+            "1.0.8": {
+                "en": "news",
+                "de": "neues",
+                "ru": "новое",
+                "pt": "novidades",
+                "nl": "nieuws",
+                "fr": "nouvelles",
+                "it": "notizie",
+                "es": "noticias",
+                "pl": "nowości",
+                "zh-cn": "新"
+            },
             "1.0.7": {
                 "en": "news",
                 "de": "neues",
