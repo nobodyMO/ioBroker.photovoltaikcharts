@@ -89,6 +89,12 @@ The input fields do not all have format checks. Numbers should be entered with a
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+- Fix column width, dynamic update
+
+
 ### 1.0.8 (2022-02-17)
 
 - Use groups for dynamic configuration

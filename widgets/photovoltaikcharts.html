@@ -24,15 +24,21 @@ $(function() {
 	
     if (vis.editMode) {
         $.extend(true, systemDictionary, {
-            "numberOfYears":        	{"en": "Count of years",             		"de": "Anzahl der Jahre",      						"ru": "Count of years"},
+            "unit":  		 	     	{"en": "Unit for Y-Axis",             		"de": "Einheit für Y-Achse",      					"ru": "Unit for Y-Axis"},
+            "unit1":        			{"en": "Unit for Y-Axis 1",            		"de": "Einheit für Y-Achse 1",      				"ru": "Unit for Y-Axis 1"},
+            "unit2":        			{"en": "Unit for Y-Axis 2",            		"de": "Einheit für Y-Achse 2",      				"ru": "Unit for Y-Axis 2"},
+            "unit3":		        	{"en": "Unit for Y-Axis 3",            		"de": "Einheit für Y-Achse 3",   					"ru": "Unit for Y-Axis 3"},
+            "chart2enabled":        	{"en": "Enable chart 2",            		"de": "Aktiviere Chart 2",   						"ru": "Enable chart 2"},
+            "chart3enabled":        	{"en": "Enable chart 3",            		"de": "Aktiviere Chart 3",   						"ru": "Enable chart 3"},			
+            "numberOfYears":        	{"en": "Count of years",             		"de": "Anzahl Jahre",  								"ru": "Count of years"},
             "seriesCount":        		{"en": "Count of Series in chart",          "de": "Anzahl der Datenreihen im Diagramm",      	"ru": "Count of Series in chart"},
             "group_series":        		{"en": "Series settings",             		"de": "Einstellungen Datenreihe",      				"ru": "Series settings"},
             "group_chart":        		{"en": "Chart settings",             		"de": "Diagrammeinstellungen",      				"ru": "Chart settings"},
             "group_zoom":        		{"en": "Zoom settings",             		"de": "Zoom Einstellungen",      					"ru": "Zoom settings"},
             "group_axis":        		{"en": "Axis settings",             		"de": "Achsen Einstellungen",      					"ru": "Axis settings"},
             "group_nagigator":      	{"en": "Navigator settings",             	"de": "Navigator Einstellungen",      				"ru": "Navigator settings"},
-            "group_years":      		{"en": "Years settings",        	     	"de": "Jahreseinstellungen",      				"ru": "Years settings"},
-            "serieshistoryoid":        	{"en": "ID for Series",             		"de": "ID für Datenreihe",      				"ru": "ID for Series 1"},
+            "group_years":      		{"en": "Years settings",        	     	"de": "Jahreseinstellungen",      					"ru": "Years settings"},
+            "serieshistoryoid":        	{"en": "ID for Series",             		"de": "ID für Datenreihe",      					"ru": "ID for Series 1"},
             "instance":       			{"en": "History Instance Series",         	"de": "History Instance Datenreihe",     			"ru": "History Instance Series"},
             "serieslabel":           	{"en": "Label for Series",                	"de": "Bezeichnung für Datenreihe",       			"ru": "Label for Series 1"},
             "multiplicator":           	{"en": "Multiplicator for Series",        	"de": "Multiplicator für Datenreihe",     			"ru": "Multiplicator for Series"},
@@ -46,6 +52,7 @@ $(function() {
 			"seriesopacity":        	{"en": "Fill opacity for Series (%)",		"de": "Füllstärke für Datenreihe (%)",       		"ru": "Fill opacity for Series (%)"},
 			"seriesaxis":        		{"en": "y-Axis for Series",					"de": "y-Achse für Datenreihe",       				"ru": "y-Axis for Series"},
 			"seriesstacking":      		{"en": "Stacking for Series",				"de": "Stapel für Datenreihe",       				"ru": "Stacking for Series"},
+			"autoreload":      			{"en": "Automatic reload (min)",			"de": "Automatisch neu laden (Minuten)",   			"ru": "Automatic reload (min)"},
 			
 			
             "instance1":       			{"en": "History Instance Series 1",         "de": "History Instance Datenreihe 1",     			"ru": "History Instance Series 1"},
@@ -212,7 +219,7 @@ $(function() {
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev3.png"></img>'
 		
         data-vis-attrs="group.navigator;navigatorRange[48]/slider,0,100,1;"
-        data-vis-attrs0="seriesCount[1]/number,1,20,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;seriescurrentoid(1-seriesCount)/id;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#2f7ed8]/color;seriesType(1-seriesCount)[area]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
+        data-vis-attrs0="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;seriescurrentoid(1-seriesCount)/id;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#2f7ed8]/color;seriesType(1-seriesCount)[area]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
         data-vis-attrs1="group.chart;title;unit;showLegend[true]/checkbox;showMenu[true]/checkbox;chart1Height[48]/slider,1,100,1;chart2Height[48]/slider,1,100,1;chartspacing[4]/slider,0,200,1;"
         data-vis-attrs2="normalizeDate[no]/select,no,hour,day,week,month,year;group.axis;yAxis1min;yAxis1max;yAxis2min;yAxis2max;;yAxis1tickamount/number;"
         data-vis-attrs3="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m,ytd,1y,all;"
@@ -240,11 +247,10 @@ $(function() {
         data-vis-type="history" 
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev4.png"></img>'
         data-vis-attrs="group.navigator;navhistoryoid/hid/onHidChanged;navinstance/history;navmultiplicator[1];navigatorRange[3]/slider,0,100,1;"
-		data-vis-attrs0="seriesCount[1]/number,1,20,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1,2;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs1="group.chart;title;unit;xAxisLabel1;xAxisLabel2;xAxisLabel3;showLegend[true]/checkbox;showMenu[true]/checkbox;chart1Height[20]/slider,1,100,1;chart2Height[40]/slider,1,100,1;chart3Height[30]/slider,1,100,1;chartspacing[5]/slider,0,200,1;"
-        data-vis-attrs2="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;group.axis;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number;yAxis2min;yAxis2max;yAxis2Categories;yAxis2tickamount/number;yAxis3min;yAxis3max;yAxis3Categories;yAxis3tickamount/number"
-		
-		
+		data-vis-attrs0="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1,2;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
+        data-vis-attrs1="group.chart;title;unit1;unit2;unit3;xAxisLabel1;xAxisLabel2;xAxisLabel3;showLegend[true]/checkbox;showMenu[true]/checkbox;chart1Height[20]/slider,1,100,1;chart2Height[40]/slider,1,100,1;chart3Height[30]/slider,1,100,1;chartspacing[5]/slider,0,200,1;autoreload[0]/number,0,120,1;"
+        data-vis-attrs2="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;group.axis;chart2enabled[true]/checkbox;chart3enabled[true]/checkbox;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number;yAxis2min;yAxis2max;yAxis2Categories;yAxis2tickamount/number;yAxis3min;yAxis3max;yAxis3Categories;yAxis3tickamount/number"
+				
         data-vis-set="photovoltaikcharts"
         data-vis-name="Time series chart 2"
 		data-vis-update-style="true"
@@ -267,7 +273,7 @@ $(function() {
         data-vis-type="history" 
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev5.png"></img>'
 		
-		data-vis-attrs="seriesCount[1]/number,1,20,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
+		data-vis-attrs="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
         data-vis-attrs0="group.chart;title;unit;showLegend[true]/checkbox;showMenu[true]/checkbox;"
         data-vis-attrs1="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;zoomoid/id;group.axis;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number"
         data-vis-set="photovoltaikcharts"

@@ -723,8 +723,9 @@ function handler(event) {
 
 	  
 	vis.binds.photovoltaikcharts = {
-		version: "1.0.8",
+		version: "1.0.9",
 		updateIntervalHandler:[],
+		reloadIntervalHandler:[],
 		delayedRefreshHandler:[],
 		
 		showVersion: function () {
@@ -1437,7 +1438,7 @@ function handler(event) {
 				yAxis: [{
 					labels: {
 						formatter: function () {
-							return this.value + ' ' + unit;
+							return this.value + (unit ? ' ' + unit : '');
 						},
 						align: 'left'
 
@@ -1777,7 +1778,83 @@ function handler(event) {
 			
 			
 			if (vis.language === 'de') Highcharts.setOptions(fbobj.highchartsOptions);
-			var unit = data.unit;
+			var yAxis = [{
+					labels: {
+						formatter: function () {
+							return this.value + (data.unit1 ? ' ' + data.unit1 : '')
+						},
+						align: 'left',
+						x: 1
+					},
+					title: {
+						text: data.xAxisLabel1
+					},
+					height: (data.chart1Height? data.chart1Height+'%':'20%'),
+					lineWidth: 1,
+					resize: {
+						enabled: true
+					},
+					categories:(data.yAxis1Categories? JSON.parse (data.yAxis1Categories): undefined),
+					offset: 0,
+					min: (data.yAxis1min?parseFloat(data.yAxis1min):undefined),
+					max: (data.yAxis1max?parseFloat(data.yAxis1max):undefined),
+					tickAmount: (data.yAxis1tickamount?data.yAxis1tickamount:undefined),
+					minorTicks: true,
+					startOnTick:false					
+				}];
+			if (data.chart2enabled!=false){
+				yAxis.push({
+					labels: {
+						formatter: function () {
+							return this.value + (data.unit2 ? ' ' + data.unit2 : '');
+						},
+						align: 'left',
+						x: 1
+
+					},
+					title: {
+						text: data.xAxisLabel2
+					},
+					top: (data.chart1Height? (parseFloat(data.chart1Height) + (data.chartspacing? parseFloat(data.chartspacing) :5)) +'%':( 20 + (data.chartspacing? parseFloat(data.chartspacing) :5))+'%'),
+					height: (data.chart2Height? data.chart2Height+'%':'40%'),
+					lineWidth: 2,
+					resize: {
+						enabled: true
+					},
+					categories:(data.yAxis2Categories? JSON.parse (data.yAxis2Categories): undefined),
+					offset: 0,
+					plotLines:plotLines,
+					min: (data.yAxis2min?parseFloat(data.yAxis2min):undefined),
+					max: (data.yAxis2max?parseFloat(data.yAxis2max):undefined),
+					tickAmount: (data.yAxis2tickamount?data.yAxis2tickamount:undefined),
+					minorTicks: true
+		
+				});
+			};
+			if (data.chart3enabled!=false){
+				yAxis.push({
+					labels: {
+						formatter: function () {
+							return this.value + (data.unit3 ? ' ' + data.unit3 : '')
+						},
+						align: 'left',
+						x: 1
+					},
+					title: {
+						text: data.xAxisLabel3
+					},
+					categories:(data.yAxis3Categories? JSON.parse (data.yAxis3Categories): undefined),
+					top: ((data.chart1Height? parseFloat(data.chart1Height) + (data.chartspacing? parseFloat(data.chartspacing) :5):20 + (data.chartspacing? parseFloat(data.chartspacing) :5)) + (data.chart2Height? parseFloat(data.chart2Height) + (data.chartspacing? parseFloat(data.chartspacing) :5):40 + (data.chartspacing? parseFloat(data.chartspacing) :5)))+'%' ,
+					height: (data.chart3Height? data.chart3Height+'%':'30%'),
+					offset: 0,
+					lineWidth: 2,
+					min: (data.yAxis3min?parseFloat(data.yAxis3min):undefined),
+					max: (data.yAxis3max?parseFloat(data.yAxis3max):undefined),
+					tickAmount: (data.yAxis3tickamount?data.yAxis3tickamount:undefined),
+					minorTicks: true
+				});	
+			};
+			
 			chart = Highcharts.stockChart(divId + widgetID, {
 				chart: {
 					width: $div.width()-2,
@@ -1862,77 +1939,7 @@ function handler(event) {
 					dateTimeLabelFormats: fbobj.highchartsDateTimeLabelFormats
 				},
 				
-				yAxis: [{
-					labels: {
-						formatter: function () {
-							return this.value;
-						},
-						align: 'left',
-						x: 1
-					},
-					title: {
-						text: data.xAxisLabel1
-					},
-					height: (data.chart1Height? data.chart1Height+'%':'20%'),
-					lineWidth: 1,
-					resize: {
-						enabled: true
-					},
-					categories:(data.yAxis1Categories? JSON.parse (data.yAxis1Categories): undefined),
-					offset: 0,
-					min: (data.yAxis1min?parseFloat(data.yAxis1min):undefined),
-					max: (data.yAxis1max?parseFloat(data.yAxis1max):undefined),
-					tickAmount: (data.yAxis1tickamount?data.yAxis1tickamount:undefined),
-					minorTicks: true,
-					startOnTick:false					
-				},{
-					labels: {
-						formatter: function () {
-							return this.value + ' ' + unit;
-						},
-						align: 'left',
-						x: 1
-
-					},
-					title: {
-						text: data.xAxisLabel2
-					},
-					top: (data.chart1Height? (parseFloat(data.chart1Height) + (data.chartspacing? parseFloat(data.chartspacing) :5)) +'%':( 20 + (data.chartspacing? parseFloat(data.chartspacing) :5))+'%'),
-					height: (data.chart2Height? data.chart2Height+'%':'40%'),
-					lineWidth: 2,
-					resize: {
-						enabled: true
-					},
-					categories:(data.yAxis2Categories? JSON.parse (data.yAxis2Categories): undefined),
-					offset: 0,
-					plotLines:plotLines,
-					min: (data.yAxis2min?parseFloat(data.yAxis2min):undefined),
-					max: (data.yAxis2max?parseFloat(data.yAxis2max):undefined),
-					tickAmount: (data.yAxis2tickamount?data.yAxis2tickamount:undefined),
-					minorTicks: true
-		
-				},{
-					labels: {
-						formatter: function () {
-							return this.value + ' ' + unit
-						},
-						align: 'left',
-						x: 1
-					},
-					title: {
-						text: data.xAxisLabel3
-					},
-					categories:(data.yAxis3Categories? JSON.parse (data.yAxis3Categories): undefined),
-					top: ((data.chart1Height? parseFloat(data.chart1Height) + (data.chartspacing? parseFloat(data.chartspacing) :5):20 + (data.chartspacing? parseFloat(data.chartspacing) :5)) + (data.chart2Height? parseFloat(data.chart2Height) + (data.chartspacing? parseFloat(data.chartspacing) :5):40 + (data.chartspacing? parseFloat(data.chartspacing) :5)))+'%' ,
-					height: (data.chart3Height? data.chart3Height+'%':'30%'),
-					offset: 0,
-					lineWidth: 2,
-					min: (data.yAxis3min?parseFloat(data.yAxis3min):undefined),
-					max: (data.yAxis3max?parseFloat(data.yAxis3max):undefined),
-					tickAmount: (data.yAxis3tickamount?data.yAxis3tickamount:undefined),
-					minorTicks: true
-				}
-				],
+				yAxis: yAxis,
 
 				plotOptions: {
 				},
@@ -2012,12 +2019,33 @@ function handler(event) {
 				
 				console.log ('Start UpdateSelector ' + new Date (oldLastX) + ' - ' + (new Date (oldExtremes.dataMax)));
 				updateSelector(navigator.historyOID,navigator.instance,navigator.multiplicator,oldLastX+1,function (){
-					if (chart.navigator.series[0].data[chart.navigator.series[0].data.length-1].x > oldLastX && oldExtremes.max > oldLastX-(10*60*1000)){
+					if (chart.navigator.series[0].data.length>0 && chart.navigator.series[0].data[chart.navigator.series[0].data.length-1].x > oldLastX && oldExtremes.max > oldLastX-(10*60*1000)){
 						var newMaxX=chart.navigator.xAxis.max;
 						chart.xAxis[0].setExtremes(oldExtremes.min+newMaxX-oldExtremes.max,newMaxX, true, true, { trigger: 'zoom' });
 					}
 						
 				});				
+			};
+
+		    function reloadSeriesData (){
+				console.log ('Start reload chart');
+				if (!chart){
+					if (fbobj.reloadIntervalHandler[widgetID]) {
+						window.clearInterval(fbobj.reloadIntervalHandler[widgetID]);
+						fbobj.reloadIntervalHandler[widgetID]=null;
+					}
+					return;
+				}
+				
+				var oldExtremes=chart.xAxis[0].getExtremes();				
+				var oldLastX=chart.navigator.xAxis.max;
+				navigationData=[];
+				loadSelectorData (navigationData,navigator.historyOID,navigator.instance,null,navigator.multiplicator,'no',(data.navigatorRange? parseInt (data.navigatorRange): 3), function (){				
+					chart.navigator.series[0].setData (navigationData);				
+					var newMaxX=chart.navigator.xAxis.max;
+					chart.xAxis[0].setExtremes(oldExtremes.min+newMaxX-oldExtremes.max,newMaxX, true, true, { trigger: 'zoom' });
+
+				});
 			};
 
 
@@ -2050,39 +2078,45 @@ function handler(event) {
 					}
 					loadSeriesData (startDate.getTime(),new Date ().getTime(),function (){
 						if (fbobj.updateIntervalHandler[widgetID]) window.clearInterval(fbobj.updateIntervalHandler[widgetID]);
+						if (fbobj.reloadIntervalHandler[widgetID]) window.clearInterval(fbobj.reloadIntervalHandler[widgetID]);
 						
-					//add mouse wheel support
-					var zoomRatio = 0;
-					var lastX;
-					var lastY;
+						//add mouse wheel support
+						var zoomRatio = 0;
+						var lastX;
+						var lastY;
 
 
-					$('#'+ divId + widgetID).mousewheel(function(objEvent, intDelta) {
-						if (intDelta > 0) {
-							zoomRatio = -1 * fbobj.scrollspeed;
-							setZoom();
+						$('#'+ divId + widgetID).mousewheel(function(objEvent, intDelta) {
+							if (intDelta > 0) {
+								zoomRatio = -1 * fbobj.scrollspeed;
+								setZoom();
+							}
+							else if (intDelta < 0) {
+								zoomRatio = fbobj.scrollspeed;
+								setZoom();
+							}
+						});
+
+						var setZoom = function() {
+
+							var xMin = chart.xAxis[0].getExtremes().dataMin;
+							var xMax = chart.xAxis[0].getExtremes().dataMax;
+							var absMin = minDate;
+							var absMax = new Date ().getTime();
+						   
+							chart.xAxis[0].setExtremes(Math.max (absMin ,xMin - zoomRatio * (xMax-xMin)), Math.min (absMax, xMax + zoomRatio * (xMax-xMin)), true, true, { trigger: 'zoom' });
 						}
-						else if (intDelta < 0) {
-							zoomRatio = fbobj.scrollspeed;
-							setZoom();
-						}
-					});
-
-					var setZoom = function() {
-
-						var xMin = chart.xAxis[0].getExtremes().dataMin;
-						var xMax = chart.xAxis[0].getExtremes().dataMax;
-						var absMin = minDate;
-						var absMax = new Date ().getTime();
-					   
-						chart.xAxis[0].setExtremes(Math.max (absMin ,xMin - zoomRatio * (xMax-xMin)), Math.min (absMax, xMax + zoomRatio * (xMax-xMin)), true, true, { trigger: 'zoom' });
-					}
 
 						
 						fbobj.updateIntervalHandler[widgetID]=window.setInterval(function () {
 						   updateSeriesData ();
 						}, 30000);
-					
+						
+						if (data.autoreload>0){
+							fbobj.updateIntervalHandler[widgetID]=window.setInterval(function () {
+								reloadSeriesData ();
+							}, data.autoreload * 60000);
+						}
 					});				
 				});
 			},10);	
@@ -2324,7 +2358,7 @@ function handler(event) {
 				yAxis: [{
 					labels: {
 						formatter: function () {
-							return this.value + ' ' + unit;
+							return this.value + (unit ? ' ' + unit : '');
 						},
 						align: 'left',
 						x: 1
