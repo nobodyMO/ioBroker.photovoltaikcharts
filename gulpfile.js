@@ -402,7 +402,7 @@ gulp.task('copyCSS', () => {
 
 gulp.task('copyImg', () => {
     return gulp.src([
-        './src/img/favicon.png','./src/img/photovoltaikchartsprev.png','./src/img/photovoltaikchartsprev2.png','./src/img/photovoltaikchartsprev3.png','./src/img/photovoltaikchartsprev4.png','./src/img/photovoltaikchartsprev5.png'
+        './src/img/favicon.png','./src/img/photovoltaikchartsprev.png','./src/img/photovoltaikchartsprev2.png','./src/img/photovoltaikchartsprev3.png','./src/img/photovoltaikchartsprev4.png','./src/img/photovoltaikchartsprev5.png','./src/img/module.png','./src/img/inverter.png'
     ])
         .pipe(gulp.dest('./widgets/photovoltaikchartWidget/img'));
 });

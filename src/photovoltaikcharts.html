@@ -24,6 +24,17 @@ $(function() {
 	
     if (vis.editMode) {
         $.extend(true, systemDictionary, {
+            "showCrosshairX":  	     	{"en": "Show Crosshair for X-Axis",         "de": "Crosshair für X-Achse anzeigen",				"ru": "Show Crosshair for X-Axis"},
+            "showCrosshairY":  	     	{"en": "Show Crosshair for y-Axis",      	"de": "Crosshair für y-Achse anzeigen",      		"ru": "Show Crosshair for y-Axis"},
+            "showYAxis":  	    	 	{"en": "Show y-Axis",      					"de": "y-Achse anzeigen",      						"ru": "Show y-Axis"},
+            "timestampid":  	     	{"en": "ID of Timestamp",      				"de": "ID des Zeitstempels",      					"ru": "ID of Timestamp"},
+            "modulePower":  	    	{"en": "Max Power of Module",      			"de": "Nennleistung des Moduls",					"ru": "Max Power of Module"},
+            "Photovoltaik inverter":  	{"en": "Photovoltaik inverter",      		"de": "Photovoltaik Wechselrichter",				"ru": "Photovoltaik inverter"},
+            "group selectActions":  	{"en": "Action buttons for time selection",	"de": "Schalter für Zeitauswahlaktionen",			"ru": "Action buttons for time selection"},
+            "playid":  					{"en": "ID of play button",      			"de": "ID des Abspiel-Schalters",					"ru": "ID of play button"},
+            "stepbackid":  				{"en": "ID of step backward button",      	"de": "ID des Zurück-Schalters",					"ru": "ID of step backward button"},
+            "stepforwardid":  			{"en": "ID of step forward button",      	"de": "ID des Vorwärts-Schalters",					"ru": "ID of step forward button"},
+            "storeTimestampSelected":   {"en": "Store Timestamp of marked point to ID",     		"de": "Speichere Timestamp von markierten Punkt in ID",   "ru": "Store Timestamp of marked point to ID"},		
             "unit":  		 	     	{"en": "Unit for Y-Axis",             		"de": "Einheit für Y-Achse",      					"ru": "Unit for Y-Axis"},
             "unit1":        			{"en": "Unit for Y-Axis 1",            		"de": "Einheit für Y-Achse 1",      				"ru": "Unit for Y-Axis 1"},
             "unit2":        			{"en": "Unit for Y-Axis 2",            		"de": "Einheit für Y-Achse 2",      				"ru": "Unit for Y-Axis 2"},
@@ -274,8 +285,9 @@ $(function() {
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev5.png"></img>'
 		
 		data-vis-attrs="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
-        data-vis-attrs0="group.chart;title;unit;showLegend[true]/checkbox;showMenu[true]/checkbox;"
-        data-vis-attrs1="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;zoomoid/id;group.axis;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number"
+        data-vis-attrs0="group.chart;title;unit;showLegend[true]/checkbox;showMenu[true]/checkbox;showYAxis[true]/checkbox;showCrosshairX[false]/checkbox;showCrosshairY[false]/checkbox;storeTimestampSelected/id;"
+        data-vis-attrs1="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;zoomoid/id;group.axis;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number;"
+        data-vis-attrs2="group.selectActions;playid/id;stepbackid/id;stepforwardid/id;"
         data-vis-set="photovoltaikcharts"
         data-vis-name="Time series chart 3"
 		data-vis-update-style="true"
@@ -288,6 +300,83 @@ $(function() {
           <%		  
             console.log(' photovoltaikcharts: Init Widget 3');
 			vis.binds.photovoltaikcharts.createTimeseries3Widget(this.data.wid, this.view, this.data, this.style);						
+          %>		  
+		</div>	
+</script>
+
+
+<script id="tplPhotovoltaikmodule"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-type="history" 
+        data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/module.png"></img>'
+		
+		data-vis-attrs="serieshistoryoid/hid/onHidChanged;instance/history;serieslabel;multiplicator[1];modulePower[355]/slider,1,1000,1;timestampid/id;rotate[0]/slider,-180,180,1;"
+        data-vis-set="photovoltaikcharts"
+        data-vis-name="Photovoltaik module"
+		data-vis-update-style="true"
+		>
+		<div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="overflow:visible; width: 80px; height: 40px;"
+		>
+			<div class="photovoltaikcharts vis-widget-body <%== this.data.attr('class') %>"  id="photovoltaikmodule<%= this.data.attr('wid') %>" style="transform:rotate(<%= this.data.attr('rotate') %>deg);">
+				<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 81 81" preserveAspectRatio="none slice">
+				 <g>
+				  <title>Solar Module</title>
+				  <line id="svg_6" y2="198.49967" x2="-252.83279" y1="198.49967" x1="-253.16612" stroke="#0E353B" fill="none"/>
+				  <rect stroke="#000" stroke-width="0" id="svg_1" height="8.925" width="80.5" y="31.24165" x="0" fill="#000000"/>
+				  <text stroke="#000" transform="matrix(1.98741 0 0 0.799349 -2.06409 9.78817)" font-weight="bold" xml:space="preserve" text-anchor="start" font-family="'Comfortaa'" font-size="8" id="label" y="35.16664" x="2.50008" stroke-width="0" fill="#ffffff">12345</text>
+				  <rect stroke="#0E353B" id="modulecolor" height="31.07217" width="80" y="0.50004" x="0" fill="#007fff"/>
+				  <line stroke="#0E353B" id="svg_5" y2="0.83059" x2="11.88505" y1="30.58054" x1="11.88505" fill="none"/>
+				  <line stroke="#0E353B" id="svg_7" y2="0.83059" x2="25.27345" y1="30.58054" x1="25.27345" fill="none"/>
+				  <line stroke="#0E353B" id="svg_8" y2="1.16115" x2="67.11222" y1="30.9111" x1="67.11222" fill="none"/>
+				  <line stroke="#0E353B" id="svg_9" y2="1.16115" x2="53.05439" y1="30.9111" x1="53.05439" fill="none"/>
+				  <line stroke="#0E353B" id="svg_10" y2="1.16115" x2="38.99657" y1="30.9111" x1="38.99657" fill="none"/>
+				  <line stroke="#0E353B" id="svg_11" y2="11.0778" x2="80.16592" y1="11.07779" x1="0.83961" fill="none"/>
+				  <line stroke="#0E353B" id="svg_12" y2="21.98615" x2="80.16588" y1="21.98615" x1="0.83957" fill="none"/>
+				  <text transform="matrix(1.95716 0 0 1.31662 -23.1314 -1.80179)" stroke="#0E353B" font-weight="bold" xml:space="preserve" font-family="'Comfortaa'" font-size="8" stroke-width="0" id="power" y="12.24685" x="32" fill="#ffffff" text-anchor="middle">--</text>
+				  <text transform="matrix(1.95716 0 0 1.31662 -23.1314 -1.80179)" stroke="#0E353B" font-weight="bold" xml:space="preserve" font-family="'Comfortaa'" font-size="8" stroke-width="0" id="unit" y="21.1079" x="32" fill="#ffffff" text-anchor="middle">W</text>
+				 </g>
+				</svg>			
+			</div>
+          <%		  
+            console.log(' photovoltaikcharts: Init Module Widget');
+			vis.binds.photovoltaikcharts.createPhotovoltaikModuleWidget(this.data.wid, this.view, this.data, this.style);						
+          %>		  
+		</div>	
+</script>
+
+<script id="tplPhotovoltaikinverter"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-type="history" 
+        data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/inverter.png"></img>'
+		
+		data-vis-attrs="serieshistoryoid/hid/onHidChanged;instance/history;serieslabel;multiplicator[1];modulePower[8000]/slider,1,30000,1;timestampid/id;rotate[0]/slider,-180,180,1;"
+        data-vis-set="photovoltaikcharts"
+        data-vis-name="Photovoltaik inverter"
+		data-vis-update-style="true"
+		>
+		<div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="overflow:visible; width: 80px; height: 80px;"
+		>
+			<div class="photovoltaikcharts vis-widget-body <%== this.data.attr('class') %>"  id="photovoltaikmodule<%= this.data.attr('wid') %>" style="transform:rotate(<%= this.data.attr('rotate') %>deg);">
+				<svg xmlns="http://www.w3.org/2000/svg"  viewBox="0 0 81 81" preserveAspectRatio="none slice">
+				 <g>
+				  <title>WR</title>
+				  <line fill="none" stroke="#0E353B" x1="-253.16612" y1="198.49967" x2="-252.83279" y2="198.49967" id="svg_6"/>
+				  <rect stroke="#000000" id="svg_1" height="71" width="80" y="9.5" x="0.5" fill="#000"/>
+				  <ellipse stroke="#000" ry="7" rx="39" id="svg_2" cy="9.5" cx="40.5" fill="#000000"/>
+				  <text transform="matrix(0.688951 0 0 0.540204 1.04059 36.4127)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="'Cabin'" font-size="14" stroke-width="0" id="label" y="75.18681" x="3.08341" fill="#ffffff">Name</text>
+				  <rect stroke="#000" id="modulecolor" height="55" width="74" y="14.5" x="2.5" stroke-width="0" fill="#1F361B"/>
+				  <text transform="matrix(1.87019 0 0 1 -26.0682 0)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="'Cabin'" font-size="24" id="svg_7" y="29.5" x="25.63882" stroke-width="0" fill="#ffffff">=</text>
+				  <text transform="matrix(2.20699 0 0 1.09547 845.067 88.2004)" stroke="#000" xml:space="preserve" text-anchor="start" font-family="'Cabin'" font-size="24" id="svg_8" y="-46.41285" x="-366.68104" stroke-width="0" fill="#ffffff">~</text>
+				  <text font-weight="bold" transform="matrix(1.23974 0 0 1 0.756365 0)" stroke="#000" xml:space="preserve" font-family="'Cabin'" font-size="14" id="power" y="45.5" x="58" stroke-width="0" fill="#ffffff" text-anchor="end">--</text>
+				  <text font-weight="bold" transform="matrix(1.23974 0 0 1 0.756365 0)" stroke="#000" xml:space="preserve" font-family="'Cabin'" font-size="14" id="unit" y="61.5" x="30" stroke-width="0" fill="#ffffff" text-anchor="middle">W</text>
+				 </g>
+				</svg>						
+			</div>
+          <%		  
+            console.log(' photovoltaikcharts: Init Module Widget');
+			vis.binds.photovoltaikcharts.createPhotovoltaikModuleWidget(this.data.wid, this.view, this.data, this.style);						
           %>		  
 		</div>	
 </script>

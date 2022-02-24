@@ -2271,6 +2271,23 @@ function handler(event) {
 			
 			if (vis.language === 'de')Highcharts.setOptions(fbobj.highchartsOptions);
 			var help= vis.states[data.serieshistoryoid1];
+			
+			function selectDate () {
+				if (data.storeTimestampSelected) {
+					chart.xAxis[0].removePlotLine('selected');
+					vis.setValue(data.storeTimestampSelected,this.hoverPoint.x);
+					chart.xAxis[0].addPlotLine({value: this.hoverPoint.x,color: 'red',width: 2,id: 'selected'});
+				}
+			}
+
+			function selectDate2 (event) {
+				if (data.storeTimestampSelected) {
+					chart.xAxis[0].removePlotLine('selected');
+					vis.setValue(data.storeTimestampSelected,event.point.x);
+					chart.xAxis[0].addPlotLine({value: event.point.x,color: 'red',width: 2,id: 'selected'});
+				}
+			}
+			
 			chart = new Highcharts.stockChart(divId + widgetID, {
 				chart: {
 					width: $div.width()-2,
@@ -2279,7 +2296,11 @@ function handler(event) {
 					panning: true,
 					panKey: 'shift',
 					renderTo: divId + widgetID,
-					backgroundColor: 'rgba(255,255,255,0)'
+					backgroundColor: 'rgba(255,255,255,0)',
+					events: {
+						click: selectDate
+					}
+					
 				},
 				title: {
 					text: data.title
@@ -2351,7 +2372,9 @@ function handler(event) {
 						setExtremes: setExtremes,
 					},
 					ordinal: false,
-					dateTimeLabelFormats: fbobj.highchartsDateTimeLabelFormats
+					dateTimeLabelFormats: fbobj.highchartsDateTimeLabelFormats,
+					crosshair: data.showCrosshairX
+					
 					//overscroll: 10000					
 				},
 				
@@ -2361,7 +2384,8 @@ function handler(event) {
 							return this.value + (unit ? ' ' + unit : '');
 						},
 						align: 'left',
-						x: 1
+						x: 1,
+						crosshair: data.showCrosshairY
 
 					},
 					lineWidth: 2,
@@ -2371,12 +2395,31 @@ function handler(event) {
 					max: (data.yAxis1max?parseFloat(data.yAxis1max):undefined),
 					tickAmount: (data.yAxis1tickamount?data.yAxis1tickamount:undefined),
 					minorTicks: true,
-					startOnTick:false
+					startOnTick:false,
+					visible: data.showYAxis
 		
 				}
 				],
 
 				plotOptions: {
+					series: {
+						events: {
+							click: selectDate2
+						}
+						
+/*
+						allowPointSelect: (data.storeTimestampSelected? true: false),
+						point: {
+							events: {
+								select: function () {
+									if (data.storeTimestampSelected && this.x) {
+										vis.states[data.storeTimestampSelected + '.val']=this.x;
+									}
+								}
+							}
+						}
+						*/
+					},
 				},
 				legend: {
 					enabled: data.showLegend,
@@ -2487,11 +2530,119 @@ function handler(event) {
 						chart.xAxis[0].setExtremes(Math.max (absMin ,xMin - zoomRatio * (xMax-xMin)), Math.min (absMax, xMax + zoomRatio * (xMax-xMin)), true, true, { trigger: 'zoom' });
 					}
 
-										
+					if (data.storeTimestampSelected && chart.series && chart.series [0] && chart.series [0].points.length>0) {
+						vis.setValue(data.storeTimestampSelected,chart.series [0].points[chart.series [0].points.length-1].x);
+						chart.xAxis[0].addPlotLine({value: chart.series [0].points[chart.series [0].points.length-1].x,color: 'red',width: 2,id: 'selected'});
+					}					
+					
 					if (fbobj.updateIntervalHandler[widgetID]) window.clearInterval(fbobj.updateIntervalHandler[widgetID]);
 					fbobj.updateIntervalHandler[widgetID]=window.setInterval(function () {
 					   updateSeriesData ();
 					}, 30000);
+					
+					
+					function stepForward () {
+						var selected = findSelected ();
+						if (selected+1<chart.series[0].points.length) {
+							selected++
+						} else {
+							selected=0;
+						}
+						chart.xAxis[0].removePlotLine('selected');
+						vis.setValue(data.storeTimestampSelected,chart.series[0].points[selected].x);
+						chart.xAxis[0].addPlotLine({value: chart.series[0].points[selected].x,color: 'red',width: 2,id: 'selected'});
+						if (vis.states [data.playid + '.val']==true) window.setTimeout (function () {
+							stepForward ();
+						},1000);
+						
+					}
+					
+					function stepBackward () {
+						var selected = findSelected ();
+						if (selected>0) {
+							selected--
+						} else {
+							selected=chart.series[0].points.length-1;
+						}
+						chart.xAxis[0].removePlotLine('selected');
+						vis.setValue(data.storeTimestampSelected,chart.series[0].points[selected].x);
+						chart.xAxis[0].addPlotLine({value: chart.series[0].points[selected].x,color: 'red',width: 2,id: 'selected'});
+						if (vis.states [data.playid + '.val']==true) window.setTimeout (function () {
+							stepForward ();
+						},1000);
+						
+					}
+					
+					
+					function onStepForward (e, newVal, oldVal){
+						if (newVal==true){
+							vis.setValue (data.stepforwardid,false);
+							stepForward ();
+						}				
+					}
+					
+					function onStepBackward (e, newVal, oldVal){
+						if (newVal==true){
+							vis.setValue (data.stepbackid,false);
+							stepBackward ();
+						}						
+					}
+					
+					function onPlay (e, newVal, oldVal){
+						if (newVal==true){
+								stepForward ();
+								//vis.setValue (data.playid,false);
+						}
+						
+					}
+					
+					
+					function findSelected (){
+						var value,i;
+						if (chart.xAxis[0].plotLinesAndBands.length>0){
+							for (i=0;i<chart.xAxis[0].plotLinesAndBands.length;i++){
+								if (chart.xAxis[0].plotLinesAndBands[i].id=='selected'){
+									value=chart.xAxis[0].plotLinesAndBands[i].options.value;
+									break;
+								}
+							}
+							if (!value) return 0;
+							for (i=0;i<chart.series[0].points.length;i++){
+								if (chart.series[0].points[i].x==value){
+									return i;
+								}
+							}
+							
+						}
+						return 0; 
+					}
+					
+					if (data.playid && data.storeTimestampSelected) {
+						console.log ('register on changes for ' + data.playid);
+						vis.states.bind(data.playid + '.val', onPlay);
+						$div.data('bound', [data.playid + '.val']);
+						$div.data('bindHandler', onPlay);
+					}			
+
+					if (data.stepbackid && data.storeTimestampSelected) {
+						console.log ('register on changes for ' + data.stepbackid);
+						vis.states.bind(data.stepbackid + '.val', onStepBackward);
+						$div.data('bound', [data.stepbackid + '.val']);
+						$div.data('bindHandler', onStepBackward);
+					}			
+
+					if (data.stepbackid && data.storeTimestampSelected) {
+						console.log ('register on changes for ' + data.stepforwardid);
+						vis.states.bind(data.stepforwardid + '.val', onStepForward);
+						$div.data('bound', [data.stepforwardid + '.val']);
+						$div.data('bindHandler', onStepForward);
+					}	
+
+					if (vis.states [data.playid + '.val']==true) window.setTimeout (function () {
+						stepForward ();
+					},1000);
+					
+					
 				});
 				
 				
@@ -2517,6 +2668,118 @@ function handler(event) {
 				$div.data('bindHandler', onChangeZoom);
 			}	
 			
+		},
+		
+		createPhotovoltaikModuleWidget: function (widgetID, view, data, style) {
+			var fbobj=this;
+			var $div = $('#' + widgetID);
+			// if nothing found => wait
+			if (!$div.length) {
+				return setTimeout(function () {
+					fbobj.createPhotovoltaikModuleWidget(widgetID, view, data, style);
+				}, 100);
+			};
+
+
+			function getValue (id,instance,multiplicator,ts,callback){
+			   var option = {};
+		
+				option.start=ts-1;
+				option.end=ts+10000;
+				option.instance  = instance;
+				option.aggregate='none';
+				option.count=1;
+				option.timeout=1000;
+				vis.getHistory(id, option, function (err, res) {
+					if (err && Object.keys(err).length > 0) {
+						console.error('Error Object: ' + JSON.stringify(err));
+						callback ();
+					}
+					if (!err && res) {
+						if (res.length>0) {
+							callback ((res[0].val || 0) * multiplicator);
+						} 	
+						// free memory
+						res = null;
+					}
+				});	
+			};
+
+			function getColor (energyValue){
+				var vgValue=energyValue/(data.modulePower || 355);
+				if (vgValue > 0.9)
+					return '#F4FD02'
+				else if (vgValue > 0.8)
+					return '#12FD02'
+				else if (vgValue > 0.6)
+					return '#02FDAD'
+				else if (vgValue > 0.4)
+					return '#02D4FD'
+				else if (vgValue > 0.2)
+					return '#029BFD'
+				else if (vgValue > 0.1)
+					return '#0208FD'
+				else 
+					return '#0238FD';
+					
+			}
+
+
+
+
+
+
+			var svg=$("#photovoltaikmodule"+widgetID).find("svg:first");
+
+			$("#label", svg).text (data.serieslabel);
+			
+			if (data.serieshistoryoid && data.instance && data.multiplicator && data.timestampid && data.timestampid && vis.states[data.timestampid + '.val']) {
+				getValue(data.serieshistoryoid,data.instance,parseFloat (data.multiplicator || 1),vis.states[data.timestampid + '.val'],function (energyValue) {
+					if (energyValue) {
+						$("#power", svg).text (energyValue.toLocaleString(undefined,{ minimumFractionDigits: 2 }));
+						$("#modulecolor", svg).attr("fill",getColor(energyValue));
+					} else {
+						$("#power", svg).text ('--');
+						$("#modulecolor", svg).attr("fill","#007fff");
+					};					
+				});
+			} else {
+				$("#power", svg).text ('--');
+				$("#modulecolor", svg).attr("fill","#007fff");
+				
+			};
+		
+
+			
+			// subscribe on updates of value
+			
+			
+			function onChangeValue (e, newVal, oldVal) {		
+				if (data.serieshistoryoid && data.instance && data.multiplicator && data.timestampid && data.timestampid) {
+					getValue(data.serieshistoryoid,data.instance,parseFloat (data.multiplicator || 1),newVal,function (energyValue) {
+						if (energyValue) {
+							$("#power", svg).text (energyValue.toLocaleString(undefined,{ minimumFractionDigits: 2 }));
+							$("#modulecolor", svg).attr("fill",getColor(energyValue));
+
+						} else {
+							$("#power", svg).text ('--');
+							$("#modulecolor", svg).attr("fill","#007fff");
+						};					
+					});
+										
+				} else {
+					$("#power", svg).text ('--');
+					$("#modulecolor", svg).attr("fill","#007fff");
+				};
+			}
+					
+
+			if (data.timestampid) {
+				console.log ('register on changes for ' + data.timestampid);
+				vis.states.bind(data.timestampid + '.val', onChangeValue);
+				$div.data('bound', [data.timestampid + '.val']);
+				$div.data('bindHandler', onChangeValue);
+			}			
 		}
 
 	};
