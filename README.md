@@ -104,13 +104,11 @@ The input fields do not all have format checks. Numbers should be entered with a
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 1.0.9 (2022-02-24)
 
 - Fix column width, dynamic update
 - New widgets for modules and inverter
 - Enhancements for timeseries3 to use as timestamp selector, stepforward, stepbackward and autoplay with external buttons
-
 
 ### 1.0.8 (2022-02-17)
 
