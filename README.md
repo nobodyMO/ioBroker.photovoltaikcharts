@@ -33,14 +33,14 @@ The widgets contain many parameters for setting step, stacking, y-axis, etc. The
 ### Chart for anual values
 ![Example](img/anualchart.png)
 
-This 3D chart shows up to 5 comparative values for the last 5 years. The value for the current year is updated continuously. Enter the ID for **statistics.0.save.sumDelta.xxx.year** as the ID of the data series and the ID for **statistics.0.temp.sumDelta.xxx.year** as the ID for the current values.
+This 3D chart shows a configurable number of comparative values for a configurable number of years. The value for the current year is updated continuously. Enter the ID for **statistics.0.save.sumDelta.xxx.year** as the ID of the data series and the ID for **statistics.0.temp.sumDelta.xxx.year** as the ID for the current values.
 
 If a number is entered under Target value, a line is also displayed.
 
 ### Chart for monthly values
 ![Example](img/monthchart.png)
 
-This chart shows the monthly values of two data series, each as a stack for the last 3 years. Enter the ID for **statistics.0.save.sumDelta.xxx.month** as the ID of the data series and the ID for **statistics.0.temp.sumDelta.xxx.month** as the ID for the current values.
+This chart shows the monthly values of data series, each as a stack for a configurable number of years years. Enter the ID for **statistics.0.save.sumDelta.xxx.month** as the ID of the data series and the ID for **statistics.0.temp.sumDelta.xxx.month** as the ID for the current values.
 
 A comma-separated list of target values can be entered under Target Value. These are shown as a grey line.
 
@@ -54,12 +54,26 @@ The first ID is also used for the navigator. The series can be assigned to the t
 ### Chart for time series of normal history data with navigator
 ![Example](img/timeseries2.png)
 
-This diagram represents time series. These do not have to be based on the statistics adapter. The chart has fixed 3 y-axes and a navigator independent of the data series. The data series can be freely assigned to the axes and stacked. Categories can also be defined as JSON, which replace numerical values.
+This diagram represents time series. These do not have to be based on the statistics adapter. The chart has up to 3 y-axes and a navigator independent of the data series. The data series can be freely assigned to the axes and stacked. Categories can also be defined as JSON, which replace numerical values.
 
 ### Chart for time series of normal history data without navigator
 ![Example](img/timeseries3.png)
 
 Diagram for time series with a Y-axis and without navigator. Replaces all the diagrams I had previously created with Flot.
+
+This diagram can also be used as a time point selector. ID for switches can be connected to go one step back or forward or to automatically cycle through all values.
+
+For this, time series per module and inverter are required, as they exist with Solar Edge optimisers. These data can be retrieved from the Solaredge website and stored in the history database, which is not part of this adapter. 
+
+Based on the history data, the timeseries3 chart for the selection of the timestamp and these widgets, a module overview can similar to the Solaredge Portal be generated, in which the module performance is displayed for a specific time or as an autoplay for the time range shown in the chart.
+![Example](img/combinated.png)
+
+## Widgets
+![Example](img/module_inverter.png)
+In addition to the diagrams, two widgets are included to display a solar module of an inverter. These widgets are not intended to display current values, but rather the value at a specific point in time from the history database. 
+
+
+
 
 ## How to use
 - install "vis"-adapter and create one instance if not installed.
