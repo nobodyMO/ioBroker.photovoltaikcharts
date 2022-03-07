@@ -69,9 +69,11 @@ For this, time series per module and inverter are required, as they exist with S
 ## Widgets
 
 ![Example](img/module_inverter.png)
+
 In addition to the diagrams, two widgets are included to display a solar module of an inverter. These widgets are not intended to display current values, but rather the value at a specific point in time from the history database. 
 
 Based on the history data, the timeseries3 chart for the selection of the timestamp and these widgets, a module overview can similar to the Solaredge Portal be generated, in which the module performance is displayed for a specific time or as an autoplay for the time range shown in the chart.
+
 ![Example](img/combination.png)
 
 

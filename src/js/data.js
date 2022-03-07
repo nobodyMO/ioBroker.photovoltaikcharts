@@ -96,11 +96,13 @@ function loadSelectorData(data,id,instance,currentId,multiplicator,mode,duration
 								if (rowcount<1000) {
 									var sql = "SELECT ts,val FROM iobroker.ts_number where id=" + dbid;
 								} else if (rowcount<10000) {
-									var sql = "SELECT * FROM ( SELECT @row := @row +1 AS rownum, ts,val FROM (SELECT @row :=0) r, iobroker.ts_number where id=" + dbid +" and ts>" + start +") ranked WHERE rownum % (" + rowcount + " DIV 1000) = 1";																
+									var sql = "SELECT * FROM ( SELECT @row := @row +1 AS rownum, ts,val FROM (SELECT @row :=0) r, iobroker.ts_number where id=" + dbid +" and ts>" + start +") ranked WHERE rownum % (" + rowcount + " DIV 200) = 1";																
 								} else if (rowcount<50000) {
+									var sql = "SELECT * FROM ( SELECT @row := @row +1 AS rownum, ts,val FROM (SELECT @row :=0) r, iobroker.ts_number where id=" + dbid +" and ts>" + start +") ranked WHERE rownum % (" + rowcount + " DIV 300) = 1";																
+								} else if (rowcount<80000) {
 									var sql = "SELECT * FROM ( SELECT @row := @row +1 AS rownum, ts,val FROM (SELECT @row :=0) r, iobroker.ts_number where id=" + dbid +" and ts>" + start +") ranked WHERE rownum % (" + rowcount + " DIV 500) = 1";																
 								} else {
-									var sql = "SELECT * FROM ( SELECT @row := @row +1 AS rownum, ts,val FROM (SELECT @row :=0) r, iobroker.ts_number where id=" + dbid +" and ts>" + start +") ranked WHERE rownum % (" + rowcount + " DIV 300) = 1";																
+									var sql = "SELECT * FROM ( SELECT @row := @row +1 AS rownum, ts,val FROM (SELECT @row :=0) r, iobroker.ts_number where id=" + dbid +" and ts>" + start +") ranked WHERE rownum % (" + rowcount + " DIV 1000) = 1";																
 								}
 								vis.conn.sendTo(instance, 'query', sql
 								, function (result) {
@@ -727,6 +729,7 @@ function handler(event) {
 		updateIntervalHandler:[],
 		reloadIntervalHandler:[],
 		delayedRefreshHandler:[],
+		playHandler:[],
 		
 		showVersion: function () {
 			if (vis.binds.photovoltaikcharts.version) {
@@ -1257,7 +1260,7 @@ function handler(event) {
 						step: (data['seriesstep'+i] && data['seriesstep'+i]!='no'?data['seriesstep'+i]: undefined),
 						stacking: (data['seriesstacking'+i] && data['seriesstacking'+i]!='no' ? data['seriesstacking'+i] :undefined),
 						dataGrouping: {
-							enabled: (data['seriesType'+i]!='column' ? true: false),
+							enabled: data['seriesgrouping'+i],
 							approximation:"high",
 							units:(data['seriesType'+i]!='column' ? fbobj.highchartsSeriesUnits:undefined)
 						},
@@ -1410,6 +1413,7 @@ function handler(event) {
 					series: [
 						{
 							data: null,
+							lineColor: data.navcolor,
 							dataGrouping: {
 								enabled: true,
 								approximation:"high",
@@ -1512,6 +1516,7 @@ function handler(event) {
 				loadSelectorData (navigationData,oidList[0].historyOID,oidList[0].instance,oidList[0].currentOID,oidList[0].multiplicator,data.normalizeDate,(data.navigatorRange? parseInt (data.navigatorRange): 48),function (){					
 					chart.navigator.series[0].setData (navigationData);				
 					chart.navigator.series[0].xAxis.min=navigationData[0][0];
+					if (data.navcolor)chart.navigator.series[0].color=data.navcolor;
 					var startDate=new Date ();
 					startDate.setUTCMilliseconds(0);
 					startDate.setUTCSeconds(0);	
@@ -1698,7 +1703,7 @@ function handler(event) {
 						step: (data['seriesstep'+ i] && data['seriesstep'+i]!='no'?data['seriesstep'+ i]: undefined),
 						stacking: (data['seriesstacking'+ i] && data['seriesstacking'+ i]!='no'  ? data['seriesstacking'+ i] :undefined),
 						dataGrouping: {
-							enabled: (data['seriesType'+i]!='column' ? true: false),
+							enabled: data['seriesgrouping'+i],
 							approximation:"high",
 							units:(data['seriesType'+i]!='column' ? fbobj.highchartsSeriesUnits:undefined)
 						},
@@ -2053,7 +2058,7 @@ function handler(event) {
 				loadSelectorData (navigationData,navigator.historyOID,navigator.instance,null,navigator.multiplicator,'no',(data.navigatorRange? parseInt (data.navigatorRange): 3), function (){				
 				
 					chart.navigator.series[0].setData (navigationData);				
-					chart.navigator.series[0].xAxis.min=navigationData[0][0];
+					chart.navigator.series[0].xAxis.min=(navigationData && navigationData.length>0?navigationData[0][0]:undefined);
 					var startDate=new Date ();
 					startDate.setUTCMilliseconds(0);
 					startDate.setUTCSeconds(0);	
@@ -2176,7 +2181,7 @@ function handler(event) {
 						step: (data['seriesstep'+i] && data['seriesstep'+i]!='no'? data['seriesstep'+i] : undefined),
 						stacking: (data['seriesstacking'+i] && data['seriesstacking'+i]!='no'  ? data['seriesstacking'+i] : undefined),
 						dataGrouping: {
-							enabled: (data['seriesType'+i]!='column' ? true: false),
+							enabled: data['seriesgrouping'+i],
 							approximation:"high",
 							units:(data['seriesType'+i]!='column' ? fbobj.highchartsSeriesUnits:undefined)
 						},
@@ -2543,34 +2548,32 @@ function handler(event) {
 					
 					function stepForward () {
 						var selected = findSelected ();
-						if (selected+1<chart.series[0].points.length) {
-							selected++
+						if (selected+ parseInt(data.playstep  ||  1) <chart.series[0].points.length) {
+							selected=selected + parseInt(data.playstep || 1);
 						} else {
 							selected=0;
 						}
 						chart.xAxis[0].removePlotLine('selected');
 						vis.setValue(data.storeTimestampSelected,chart.series[0].points[selected].x);
 						chart.xAxis[0].addPlotLine({value: chart.series[0].points[selected].x,color: 'red',width: 2,id: 'selected'});
-						if (vis.states [data.playid + '.val']==true) window.setTimeout (function () {
-							stepForward ();
-						},1000);
-						
+						if (fbobj.playHandler[widgetID]) window.clearInterval(fbobj.playHandler[widgetID]);
+						if (vis.states [data.playid + '.val']==true) {
+							fbobj.playHandler[widgetID]=window.setTimeout (function () {
+								stepForward ();
+							},parseInt(data.playspeed  ||  3) *1000);
+						}
 					}
 					
 					function stepBackward () {
 						var selected = findSelected ();
-						if (selected>0) {
-							selected--
+						if (selected>parseInt(data.playstep  ||  1)) {
+							selected=selected-parseInt(data.playstep  ||  1)
 						} else {
-							selected=chart.series[0].points.length-1;
+							selected=chart.series[0].points.length-parseInt(data.playstep  ||  1);
 						}
 						chart.xAxis[0].removePlotLine('selected');
 						vis.setValue(data.storeTimestampSelected,chart.series[0].points[selected].x);
-						chart.xAxis[0].addPlotLine({value: chart.series[0].points[selected].x,color: 'red',width: 2,id: 'selected'});
-						if (vis.states [data.playid + '.val']==true) window.setTimeout (function () {
-							stepForward ();
-						},1000);
-						
+						chart.xAxis[0].addPlotLine({value: chart.series[0].points[selected].x,color: 'red',width: 2,id: 'selected'});						
 					}
 					
 					
@@ -2638,9 +2641,9 @@ function handler(event) {
 						$div.data('bindHandler', onStepForward);
 					}	
 
-					if (vis.states [data.playid + '.val']==true) window.setTimeout (function () {
+					if (vis.editMode!=true && data.storeTimestampSelected && vis.states [data.playid + '.val']==true) fbobj.playHandler[widgetID]=window.setTimeout (function () {
 						stepForward ();
-					},1000);
+					},parseInt(data.playspeed  ||  3) *1000);
 					
 					
 				});
@@ -2672,6 +2675,8 @@ function handler(event) {
 		
 		createPhotovoltaikModuleWidget: function (widgetID, view, data, style) {
 			var fbobj=this;
+			var cache=[];
+			var historyLoading=false;
 			var $div = $('#' + widgetID);
 			// if nothing found => wait
 			if (!$div.length) {
@@ -2683,20 +2688,27 @@ function handler(event) {
 
 			function getValue (id,instance,multiplicator,ts,callback){
 			   var option = {};
-		
+				if (historyLoading) return callback ();
+				historyLoading= true;
 				option.start=ts-1;
-				option.end=ts+10000;
+				option.end=ts+(2*360000);
 				option.instance  = instance;
 				option.aggregate='none';
 				option.count=1;
-				option.timeout=1000;
+				option.timeout=5000;
 				vis.getHistory(id, option, function (err, res) {
+					historyLoading= false;			
 					if (err && Object.keys(err).length > 0) {
-						console.error('Error Object: ' + JSON.stringify(err));
+						console.error('Error Object: ' + err);
 						callback ();
 					}
 					if (!err && res) {
 						if (res.length>0) {
+							var now=new Date ().getTime();
+							for (var i=0;i<res.length;i++) {
+								var obj={val: res[i].val, cacheDate:now};
+								cache [res[i].ts]=obj;
+							}
 							callback ((res[0].val || 0) * multiplicator);
 						} 	
 						// free memory
@@ -2733,7 +2745,7 @@ function handler(event) {
 
 			$("#label", svg).text (data.serieslabel);
 			
-			if (data.serieshistoryoid && data.instance && data.multiplicator && data.timestampid && data.timestampid && vis.states[data.timestampid + '.val']) {
+			if (data.serieshistoryoid && data.instance && data.timestampid && vis.states[data.timestampid + '.val']) {
 				getValue(data.serieshistoryoid,data.instance,parseFloat (data.multiplicator || 1),vis.states[data.timestampid + '.val'],function (energyValue) {
 					if (energyValue) {
 						$("#power", svg).text (energyValue.toLocaleString(undefined,{ minimumFractionDigits: 2 }));
@@ -2755,22 +2767,34 @@ function handler(event) {
 			
 			
 			function onChangeValue (e, newVal, oldVal) {		
-				if (data.serieshistoryoid && data.instance && data.multiplicator && data.timestampid && data.timestampid) {
-					getValue(data.serieshistoryoid,data.instance,parseFloat (data.multiplicator || 1),newVal,function (energyValue) {
-						if (energyValue) {
-							$("#power", svg).text (energyValue.toLocaleString(undefined,{ minimumFractionDigits: 2 }));
-							$("#modulecolor", svg).attr("fill",getColor(energyValue));
+				console.log ('Changed value for widget ' + widgetID + ' value ' + new Date (newVal));
+				//if (data.serieshistoryoid && data.instance && data.timestampid) {
+				if ((e != undefined) && (newVal != oldVal)) {
+					if (cache[newVal] != undefined && cache[newVal].cacheDate > (new Date ().getTime()-360000)) {
+						if (cache[newVal].val) {
+							$("#power", svg).text (cache[newVal].val.toLocaleString(undefined,{ minimumFractionDigits: 2 }));
+							$("#modulecolor", svg).attr("fill",getColor(cache[newVal].val));
 
-						} else {
+						} else if (cache[newVal].val===0){
 							$("#power", svg).text ('--');
 							$("#modulecolor", svg).attr("fill","#007fff");
 						};					
-					});
-										
-				} else {
-					$("#power", svg).text ('--');
-					$("#modulecolor", svg).attr("fill","#007fff");
-				};
+						
+					} else {
+						window.setTimeout (function () {
+							getValue(data.serieshistoryoid,data.instance,parseFloat (data.multiplicator || 1),newVal,function (energyValue) {
+								if (energyValue) {
+									$("#power", svg).text (energyValue.toLocaleString(undefined,{ minimumFractionDigits: 2 }));
+									$("#modulecolor", svg).attr("fill",getColor(energyValue));
+
+								} else if (energyValue===0){
+									$("#power", svg).text ('--');
+									$("#modulecolor", svg).attr("fill","#007fff");
+								};					
+							});
+						},10);
+					}
+				};						
 			}
 					
 

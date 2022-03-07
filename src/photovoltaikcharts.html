@@ -32,6 +32,8 @@ $(function() {
             "Photovoltaik inverter":  	{"en": "Photovoltaik inverter",      		"de": "Photovoltaik Wechselrichter",				"ru": "Photovoltaik inverter"},
             "group selectActions":  	{"en": "Action buttons for time selection",	"de": "Schalter für Zeitauswahlaktionen",			"ru": "Action buttons for time selection"},
             "playid":  					{"en": "ID of play button",      			"de": "ID des Abspiel-Schalters",					"ru": "ID of play button"},
+            "playspeed":  				{"en": "Playback speed (sec/step)", 		"de": "Abspielgeschwindigkeit (sek/Schritt)",		"ru": "Playback speed (sec/step)"},
+            "playstep":  				{"en": "Playback step", 					"de": "Werte pro Schritt",							"ru": "Playback step"},
             "stepbackid":  				{"en": "ID of step backward button",      	"de": "ID des Zurück-Schalters",					"ru": "ID of step backward button"},
             "stepforwardid":  			{"en": "ID of step forward button",      	"de": "ID des Vorwärts-Schalters",					"ru": "ID of step forward button"},
             "storeTimestampSelected":   {"en": "Store Timestamp of marked point to ID",     		"de": "Speichere Timestamp von markierten Punkt in ID",   "ru": "Store Timestamp of marked point to ID"},		
@@ -61,6 +63,7 @@ $(function() {
             "serieshoverlinewidth":    	{"en": "Line width on hover for Series", 	"de": "Liniendicke bei Markierung für Datenreihe",  "ru": "Line width on hover for Series"},
             "seriesstep":         		{"en": "Steping for Series", 	          	"de": "Schritt für Datenreihe",              		"ru": "Steping for Series"},
 			"seriesopacity":        	{"en": "Fill opacity for Series (%)",		"de": "Füllstärke für Datenreihe (%)",       		"ru": "Fill opacity for Series (%)"},
+			"seriesgrouping":        	{"en": "Group Series data",					"de": "Werte gruppieren",				       		"ru": "Group Series data"},
 			"seriesaxis":        		{"en": "y-Axis for Series",					"de": "y-Achse für Datenreihe",       				"ru": "y-Axis for Series"},
 			"seriesstacking":      		{"en": "Stacking for Series",				"de": "Stapel für Datenreihe",       				"ru": "Stacking for Series"},
 			"autoreload":      			{"en": "Automatic reload (min)",			"de": "Automatisch neu laden (Minuten)",   			"ru": "Automatic reload (min)"},
@@ -108,6 +111,7 @@ $(function() {
             "all":       				{"en": "All",                				"de": "Alles",         								"ru": "All"},
             "navhistoryoid":        	{"en": "ID for Navigator",             		"de": "ID für Navigator",      						"ru": "ID for Series 1"},
             "navinstance":       		{"en": "History Instance Navigator",        "de": "History Instance Navigator",     			"ru": "History Instance Navigator"},
+            "navcolor":       			{"en": "Color of Navigator line",	        "de": "Farbe der Navigator Reihe",	     			"ru": "Color of Navigator line"},
             "navmultiplicator":         {"en": "Multiplicator for Navigator",       "de": "Multiplikator for Navigator",       			"ru": "Multiplicator for Navigator"},
             "xAxisLabel1":         		{"en": "Label for Y-Axis 1",     			"de": "Bezeichnung für Y-Axis 1",       			"ru": "Label for Y-Axis 1"},
             "xAxisLabel2":         		{"en": "Label for Y-Axis 2",     			"de": "Bezeichnung für Y-Axis 2",       			"ru": "Label for Y-Axis 2"},
@@ -229,8 +233,8 @@ $(function() {
         data-vis-type="history" 
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev3.png"></img>'
 		
-        data-vis-attrs="group.navigator;navigatorRange[48]/slider,0,100,1;"
-        data-vis-attrs0="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;seriescurrentoid(1-seriesCount)/id;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#2f7ed8]/color;seriesType(1-seriesCount)[area]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
+        data-vis-attrs="group.navigator;navigatorRange[48]/slider,0,100,1;navcolor/color;"
+        data-vis-attrs0="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;seriescurrentoid(1-seriesCount)/id;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#2f7ed8]/color;seriesType(1-seriesCount)[area]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;seriesgrouping(1-seriesCount)[true]/checkbox;"
         data-vis-attrs1="group.chart;title;unit;showLegend[true]/checkbox;showMenu[true]/checkbox;chart1Height[48]/slider,1,100,1;chart2Height[48]/slider,1,100,1;chartspacing[4]/slider,0,200,1;"
         data-vis-attrs2="normalizeDate[no]/select,no,hour,day,week,month,year;group.axis;yAxis1min;yAxis1max;yAxis2min;yAxis2max;;yAxis1tickamount/number;"
         data-vis-attrs3="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m,ytd,1y,all;"
@@ -258,7 +262,7 @@ $(function() {
         data-vis-type="history" 
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev4.png"></img>'
         data-vis-attrs="group.navigator;navhistoryoid/hid/onHidChanged;navinstance/history;navmultiplicator[1];navigatorRange[3]/slider,0,100,1;"
-		data-vis-attrs0="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1,2;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
+		data-vis-attrs0="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1,2;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;seriesgrouping(1-seriesCount)[true]/checkbox;"
         data-vis-attrs1="group.chart;title;unit1;unit2;unit3;xAxisLabel1;xAxisLabel2;xAxisLabel3;showLegend[true]/checkbox;showMenu[true]/checkbox;chart1Height[20]/slider,1,100,1;chart2Height[40]/slider,1,100,1;chart3Height[30]/slider,1,100,1;chartspacing[5]/slider,0,200,1;autoreload[0]/number,0,120,1;"
         data-vis-attrs2="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;group.axis;chart2enabled[true]/checkbox;chart3enabled[true]/checkbox;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number;yAxis2min;yAxis2max;yAxis2Categories;yAxis2tickamount/number;yAxis3min;yAxis3max;yAxis3Categories;yAxis3tickamount/number"
 				
@@ -284,10 +288,10 @@ $(function() {
         data-vis-type="history" 
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev5.png"></img>'
 		
-		data-vis-attrs="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;"
+		data-vis-attrs="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;seriesgrouping(1-seriesCount)[true]/checkbox;"
         data-vis-attrs0="group.chart;title;unit;showLegend[true]/checkbox;showMenu[true]/checkbox;showYAxis[true]/checkbox;showCrosshairX[false]/checkbox;showCrosshairY[false]/checkbox;storeTimestampSelected/id;"
         data-vis-attrs1="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;zoomoid/id;group.axis;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number;"
-        data-vis-attrs2="group.selectActions;playid/id;stepbackid/id;stepforwardid/id;"
+        data-vis-attrs2="group.selectActions;playid/id;stepbackid/id;stepforwardid/id;playspeed[3]/slider,1,20,1;playstep[1]/slider,1,100,1;"
         data-vis-set="photovoltaikcharts"
         data-vis-name="Time series chart 3"
 		data-vis-update-style="true"
@@ -303,7 +307,6 @@ $(function() {
           %>		  
 		</div>	
 </script>
-
 
 <script id="tplPhotovoltaikmodule"
         type="text/ejs"
