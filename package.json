@@ -24,7 +24,7 @@
   "deprecated": false,
   "description": "This adapter contains some widgets with charts for photovoltaik statistic data in ioBroker.",
   "devDependencies": {
-    "@alcalzone/release-script": "^3.5.2",
+    "@alcalzone/release-script": "^3.5.8",
     "@alcalzone/release-script-plugin-iobroker": "^3.5.1",
     "@iobroker/testing": "^2.5.4"
   },
