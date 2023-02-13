@@ -1,6 +1,6 @@
 {
   "name": "iobroker.photovoltaikcharts",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "author": {
     "name": "Markus Korporal",
     "email": "markus@korporal.de"
@@ -11,15 +11,15 @@
   "bundleDependencies": false,
   "dependencies": {
     "chai": "^4.3.6",
-    "del": "^6.1.1",
+    "del": "^7.0.0",
     "gulp": "^4.0.2",
     "gulp-concat": "^2.6.1",
     "gulp-htmlmin": "^5.0.1",
     "gulp-sourcemaps": "^3.0.0",
     "gulp-uglify": "^3.0.2",
-    "highcharts": "^10.1.0",
+    "highcharts": "^10.3.3",
     "@types/gulp": "^4.0.9",
-    "axios": "^0.27.2"
+    "axios": "^1.3.2"
   },
   "deprecated": false,
   "description": "This adapter contains some widgets with charts for photovoltaik statistic data in ioBroker.",
