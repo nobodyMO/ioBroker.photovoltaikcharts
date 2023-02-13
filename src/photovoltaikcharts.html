@@ -1,16 +1,20 @@
 <!--
     ioBroker.vis photovoltaik charts Widget-Set
 
-    version: "1.0.8"
+    version: "1.0.10"
  
-    Copyright 2022 nobodyMO markus@korporal.de
+    Copyright 2022,2023 nobodyMO markus@korporal.de 
 -->
 <!-- here you can include so many css as you want -->
 <link rel="stylesheet" href="widgets/photovoltaikchartWidget/css/styles.css" />
 <!-- here you can include so many js-files as you want -->
 <script type="text/javascript" src="widgets/photovoltaikchartWidget/highcharts/highstock.js"></script>
 <script type="text/javascript" src="widgets/photovoltaikchartWidget/highcharts/highcharts-3d.js"></script>
+<script type="text/javascript" src="widgets/photovoltaikchartWidget/highcharts/highcharts-more.js"></script>
+<script type="text/javascript" src="widgets/photovoltaikchartWidget/highcharts/solid-gauge.js"></script>
+<!--
 <script type="text/javascript" src="widgets/photovoltaikchartWidget/highcharts/boost.js"></script>
+-->
 <script type="text/javascript" src="widgets/photovoltaikchartWidget/highcharts/exporting.js"></script>
 <script type="text/javascript" src="widgets/photovoltaikchartWidget/highcharts/export-data.js"></script>
 <script type="text/javascript" src="widgets/photovoltaikchartWidget/highcharts/offline-exporting.js"></script>
@@ -27,7 +31,10 @@ $(function() {
             "showCrosshairX":  	     	{"en": "Show Crosshair for X-Axis",         "de": "Crosshair für X-Achse anzeigen",				"ru": "Show Crosshair for X-Axis"},
             "showCrosshairY":  	     	{"en": "Show Crosshair for y-Axis",      	"de": "Crosshair für y-Achse anzeigen",      		"ru": "Show Crosshair for y-Axis"},
             "showYAxis":  	    	 	{"en": "Show y-Axis",      					"de": "y-Achse anzeigen",      						"ru": "Show y-Axis"},
-            "timestampid":  	     	{"en": "ID of Timestamp",      				"de": "ID des Zeitstempels",      					"ru": "ID of Timestamp"},
+            "legendItemStyle":  	   	{"en": "Legend Item Style JSON",      		"de": "Legende Style-Info (JSON)",      				"ru": "Legend Item Style JSON"},
+            "legendItemDistance":  	   	{"en": "Legend Item Distance",      		"de": "Legende Element-Abstand",      				"ru": "Legend Item Distance"},
+            				
+			"timestampid":  	     	{"en": "ID of Timestamp",      				"de": "ID des Zeitstempels",      					"ru": "ID of Timestamp"},
             "modulePower":  	    	{"en": "Max Power of Module",      			"de": "Nennleistung des Moduls",					"ru": "Max Power of Module"},
             "Photovoltaik inverter":  	{"en": "Photovoltaik inverter",      		"de": "Photovoltaik Wechselrichter",				"ru": "Photovoltaik inverter"},
             "group selectActions":  	{"en": "Action buttons for time selection",	"de": "Schalter für Zeitauswahlaktionen",			"ru": "Action buttons for time selection"},
@@ -235,7 +242,7 @@ $(function() {
 		
         data-vis-attrs="group.navigator;navigatorRange[48]/slider,0,100,1;navcolor/color;"
         data-vis-attrs0="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;seriescurrentoid(1-seriesCount)/id;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#2f7ed8]/color;seriesType(1-seriesCount)[area]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;seriesgrouping(1-seriesCount)[true]/checkbox;"
-        data-vis-attrs1="group.chart;title;unit;showLegend[true]/checkbox;showMenu[true]/checkbox;chart1Height[48]/slider,1,100,1;chart2Height[48]/slider,1,100,1;chartspacing[4]/slider,0,200,1;"
+        data-vis-attrs1="group.chart;title;unit;showLegend[true]/checkbox;legendItemStyle;legendItemDistance[20]/slider,1,100,1;showMenu[true]/checkbox;chart1Height[48]/slider,1,100,1;chart2Height[48]/slider,1,100,1;chartspacing[4]/slider,0,200,1;"
         data-vis-attrs2="normalizeDate[no]/select,no,hour,day,week,month,year;group.axis;yAxis1min;yAxis1max;yAxis2min;yAxis2max;;yAxis1tickamount/number;"
         data-vis-attrs3="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m,ytd,1y,all;"
 		
@@ -263,7 +270,7 @@ $(function() {
         data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/photovoltaikchartsprev4.png"></img>'
         data-vis-attrs="group.navigator;navhistoryoid/hid/onHidChanged;navinstance/history;navmultiplicator[1];navigatorRange[3]/slider,0,100,1;"
 		data-vis-attrs0="seriesCount[1]/number,1,30,1;group.series/byindex;serieshistoryoid(1-seriesCount)/hid/onHidChanged;instance(1-seriesCount)/history;serieslabel(1-seriesCount);multiplicator(1-seriesCount)[1];seriescolor(1-seriesCount)[#FF5A33]/color;seriesType(1-seriesCount)[areaspline]/select,area,areaspline,line,spline,column,bar;serieslinewidth(1-seriesCount)[1]/number;serieshoverlinewidth(1-seriesCount)[2]/number;seriesstep(1-seriesCount)/select,no,left,center,right;seriesopacity(1-seriesCount)[30]/slider,1,100,1;seriesaxis(1-seriesCount)[0]/select,0,1,2;seriesstacking(1-seriesCount)[no]/select,no,A,B,C,D,E;seriesgrouping(1-seriesCount)[true]/checkbox;"
-        data-vis-attrs1="group.chart;title;unit1;unit2;unit3;xAxisLabel1;xAxisLabel2;xAxisLabel3;showLegend[true]/checkbox;showMenu[true]/checkbox;chart1Height[20]/slider,1,100,1;chart2Height[40]/slider,1,100,1;chart3Height[30]/slider,1,100,1;chartspacing[5]/slider,0,200,1;autoreload[0]/number,0,120,1;"
+        data-vis-attrs1="group.chart;title;unit1;unit2;unit3;xAxisLabel1;xAxisLabel2;xAxisLabel3;showLegend[true]/checkbox;legendItemStyle;legendItemDistance[20]/slider,1,100,1;showMenu[true]/checkbox;chart1Height[20]/slider,1,100,1;chart2Height[40]/slider,1,100,1;chart3Height[30]/slider,1,100,1;chartspacing[5]/slider,0,200,1;autoreload[0]/number,0,120,1;"
         data-vis-attrs2="group.zoom;zoomDefault[1d]/select,1d,3d,7d,1m,3m,6m;group.axis;chart2enabled[true]/checkbox;chart3enabled[true]/checkbox;yAxis1min;yAxis1max;yAxis1Categories;yAxis1tickamount/number;yAxis2min;yAxis2max;yAxis2Categories;yAxis2tickamount/number;yAxis3min;yAxis3max;yAxis3Categories;yAxis3tickamount/number"
 				
         data-vis-set="photovoltaikcharts"
@@ -380,6 +387,31 @@ $(function() {
           <%		  
             console.log(' photovoltaikcharts: Init Module Widget');
 			vis.binds.photovoltaikcharts.createPhotovoltaikModuleWidget(this.data.wid, this.view, this.data, this.style);						
+          %>		  
+		</div>	
+</script>
+
+<script id="tplPhotovoltaikgauge"
+        type="text/ejs"
+        class="vis-tpl"
+        data-vis-type="history" 
+        data-vis-prev='<img src="widgets/photovoltaikchartWidget/img/inverter.png"></img>'
+		
+		data-vis-attrs="oid/id;multiplicator[1];title;titlePositionY/number;labelsPositionY/number;dataLabelsPositionY/number;dataLabelsBorderWidth/number;min[0]/number;max[100]/number;valuesuffix;"		
+		data-vis-attrs0="panCenterX[50]/slider,1,100,1;panCenterY[50]/slider,1,100,1;startAngel[-90]/slider,-90,90,1;stopAngel[90]/slider,-90,90,1;paneBackgroundColor1/color;paneBackgroundColor2/color;borderColor/color;innerRadius[60]/slider,0,100,1;outerRadius[90]/slider,0,100,1;fontsizevalue;fontsizesuffix;lineWidth[0]/number;tickWidth[0]/number;minorTickInterval/number;tickAmount[2]/number;"
+		data-vis-attrs1="shape[arc]/select,arc,circle;stopCount[1]/number,1,30,1;group.stops/byindex;stopposition(1-stopCount)/slider,1,100,1;stopcolor(1-stopCount)/color;"
+        data-vis-set="photovoltaikcharts"
+        data-vis-name="Photovoltaik Gauge"
+		data-vis-update-style="true"
+		>
+		<div class="vis-widget <%== this.data.attr('class') %>" id="<%= this.data.attr('wid') %>" style="overflow:visible; width: 230px; height: 210px"
+		>
+			<div class="photovoltaikcharts vis-widget-body <%== this.data.attr('class') %>"  >
+				<div id="chart_placeholder<%= this.data.attr('wid') %>" class="chart-placeholder"></div>
+			</div>
+          <%		  
+            console.log(' photovoltaikcharts: Gauge');
+			vis.binds.photovoltaikcharts.createGaugeWidget(this.data.wid, this.view, this.data, this.style);						
           %>		  
 		</div>	
 </script>
