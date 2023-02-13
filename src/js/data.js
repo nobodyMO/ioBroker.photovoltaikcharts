@@ -13,7 +13,7 @@ function readOneChart(seriesData,id,instance,currentId,multiplicator, index, cal
     option.instance  = instance;
 	option.aggregate='none';
 	option.count=1000;
-	option.timeout=12000;
+	option.timeout=6000;
     console.log(new Date(option.start) + ' - ' + new Date(option.end));
 	vis.getHistory(id, option, function (err, res) {
 		console.log('got History data');
@@ -113,7 +113,7 @@ function loadSelectorData(data,id,instance,currentId,multiplicator,mode,duration
 										// show result
 										for (var i = 0; i < result.result.length; i++) {
 											eventDate=normalizeDate(new Date (result.result[i].ts),mode);
-											console.log(eventDate + ':' + result.result[i].val);
+											//console.log(eventDate + ':' + result.result[i].val);
 											data.push ([eventDate.getTime(),(result.result[i].val || 0) * multiplicator]);
 										} 	
 										// free memory
@@ -153,7 +153,7 @@ function readOneLineRange(chart,id,instance,currentId,multiplicator, index,mode,
     option.instance  = instance;
 	option.aggregate='minmax';
 	//option.count=2000;
-	option.timeout=12000;
+	option.timeout=6000;
     console.log(JSON.stringify(option));
     console.log('Load Range for ' + id +' '+ new Date(option.start) + ' - ' + new Date(option.end));
 	vis.getHistory(id, option, function (err, res) {
@@ -202,7 +202,7 @@ function readAndAddOneLineRange(chart,id,instance,multiplicator, index,mode,star
 	option.end=end;
     option.instance  = instance;
 	option.aggregate='minmax';
-	option.timeout=12000;
+	option.timeout=6000;
     console.log('Load Range for ' + id +' '+ new Date(option.start) + ' - ' + new Date(option.end));
 	vis.getHistory(id, option, function (err, res) {
         if (err && Object.keys(err).length > 0) console.error('Error Object: ' + JSON.stringify(err));
@@ -1195,7 +1195,7 @@ function handler(event) {
 				var ids=fbobj.findOID(oidList,e.type);
 				var eventDate=normalizeDate (new Date (),data.normalizeDate);
 				for (var i=0;i<ids.length;i++){				
-					console.log ('add new series ' + (ids[i]+1) + ' value :' + eventDate + '(' + eventDate.getTime() + ') - ' + newVal);
+					//console.log ('add new series ' + (ids[i]+1) + ' value :' + eventDate + '(' + eventDate.getTime() + ') - ' + newVal);
 					chart.series[ids[i]].data[numberOfYears-1].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator);				
 				}
 			}
@@ -1251,6 +1251,7 @@ function handler(event) {
 					oidList.push ({id:j, historyOID:data['serieshistoryoid'+i],instance:data ['instance'+ i ],currentOID:data ['seriescurrentoid'+i],  multiplicator:parseFloat(data ['multiplicator'+ i ]) || 1,lastX:0 });
 					seriesData.push ({
 						name: data['serieslabel'+i] ,
+						boostThreshold:1,
 						data: [],
 						color: data['seriescolor'+i] || '#FF5A33',
 						lineWidth: data['serieslinewidth'+i] || 1,
@@ -1491,7 +1492,9 @@ function handler(event) {
 					verticalAlign: 'top',
 					x: 0,
 					y: 20,
-					floating: true           
+					floating: true,
+					itemStyle: (data.legendItemStyle?JSON.parse(data.legendItemStyle):{"color": "#333333", "cursor": "pointer", "fontSize": "12px", "fontWeight": "bold", "textOverflow": "ellipsis"}),				
+					itemDistance : (data.legendItemDistance?parseInt(data.legendItemDistance):undefined)
 				},
 				exporting: {
 					enabled: data.showMenu,
@@ -1591,20 +1594,20 @@ function handler(event) {
 				var ids=fbobj.findOID(oidList,e.type);
 				var eventDate=normalizeDate (new Date (),data.normalizeDate);
 				for (var i=0;i<ids.length;i++){				
-					console.log ('add new series ' + (ids[i]+1) + ' value :' + eventDate + '(' + eventDate.getTime() + ') - ' + newVal);
+					//console.log ('add new series ' + (ids[i]+1) + ' value :' + eventDate + '(' + eventDate.getTime() + ') - ' + newVal);
 					if (ids[i]==0) {
 
-						if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points [chart.navigator.series[0].points.length-1]) console.log ('Last old x:' + chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x);
+						if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points [chart.navigator.series[0].points.length-1]) console.log ('Last old x:' + chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x );
 
 						if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points [chart.navigator.series[0].points.length-1] && chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x==eventDate.getTime()){
-							chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator);
+							chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator, false, false);
 						} else {
 							chart.navigator.series[0].addPoint ([eventDate.getTime(),(parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator]); 
 						}
 
-						if (chart.series[ids[i]].points && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1] && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].x==eventDate.getTime()){
-							console.log ('Update series ' + (ids[i]+1));			
-							chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator);
+						if (chart.series[ids[i]].points && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1] && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].x==eventDate.getTime() && typeof chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].update === "function"){
+							console.log ('V1 Update series ' + (ids[i]+1));			
+							chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator, false, false);
 						} else {
 							console.log ('Add new value to series 1');
 							if (chart && chart.xAxis && typeof chart.xAxis[0] != 'undefined') {
@@ -1624,8 +1627,8 @@ function handler(event) {
 							}
 						}
 					} else {
-						if (chart.series[ids[i]].points && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1] && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].x==eventDate.getTime()){
-							chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator);
+						if (chart.series[ids[i]].points && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1] && chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].x==eventDate.getTime() && typeof chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].update === "function"){
+							chart.series[ids[i]].points[chart.series[ids[i]].points.length-1].update((parseFloat(newVal) || 0) * oidList[ids[i]].multiplicator, false, false);
 						} else {   				
 							if (chart && chart.xAxis && typeof chart.xAxis[1] != 'undefined') {
 								var oldExtremes=chart.xAxis[1].getExtremes();
@@ -1694,6 +1697,7 @@ function handler(event) {
 					
 					seriesData.push ({
 						name: data['serieslabel'+ i] ,
+						boostThreshold:1,
 						data: [],
 						color: data['seriescolor'+ i] || '#FF5A33',
 						lineWidth: data['serieslinewidth'+ i] || 1,
@@ -1954,7 +1958,9 @@ function handler(event) {
 					verticalAlign: 'top',
 					x: 0,
 					y: 20,
-					floating: true           
+					floating: true,
+					itemStyle: (data.legendItemStyle?JSON.parse(data.legendItemStyle):{"color": "#333333", "cursor": "pointer", "fontSize": "12px", "fontWeight": "bold", "textOverflow": "ellipsis"}),
+					itemDistance : (data.legendItemDistance?parseInt(data.legendItemDistance):undefined)					
 				},
 				exporting: {
 					enabled: data.showMenu,
@@ -1985,7 +1991,7 @@ function handler(event) {
 				option.aggregate='minmax';
 				//option.count=2000;
 				option.limit=300;
-				option.timeout=12000;
+				option.timeout=6000;
 				vis.getHistory(id, option, function (err, res) {
 					if (err && Object.keys(err).length > 0) console.error('Error Object: ' + JSON.stringify(err));
 					if (!err && res) {
@@ -1993,19 +1999,24 @@ function handler(event) {
 						for (var i = 0; i < res.length; i++) {
 							eventDate=new Date (res[i].ts);
 							eventValue=res[i].val * multiplicator;
-							//console.log(id +' '+ new Date (res[i].ts)+ ' n ' + eventDate + ':' + res[i].val);
+							console.log(id +' '+ new Date (res[i].ts)+ ' n ' + eventDate + ':' + res[i].val);
 							if (res[i].val!=null){
 								if (chart.navigator.series[0].data && chart.navigator.series[0].data.length>0 && chart.navigator.series[0].data [chart.navigator.series[0].data.length-1] && chart.navigator.series[0].data[chart.navigator.series[0].data.length-1].x==eventDate.getTime()){
-									chart.navigator.series[0].data[chart.navigator.series[0].data.length-1].update(eventValue);
+									if (chart.navigator.series[0].data [chart.navigator.series[0].data.length-1] && chart.navigator.series[0].data[chart.navigator.series[0].data.length-1].y!= eventValue) chart.navigator.series[0].data[chart.navigator.series[0].data.length-1].update(eventValue, false, false);
 								} else {
-									chart.navigator.series[0].addPoint ([eventDate.getTime(),eventValue]); 
+									chart.navigator.series[0].addPoint ([eventDate.getTime(),eventValue], false, false, false, false); 
 								}
 							}
 						} 	
 						// free memory
 						res = null;
+						chart.redraw(false);
 					}
-					if (callback) callback();
+					console.log('Finished Selector update');
+					if (callback) {
+						console.log('Start callback');
+						callback();
+					}
 				});
 			};
 
@@ -2022,10 +2033,21 @@ function handler(event) {
 				var oldExtremes=chart.xAxis[0].getExtremes();				
 				var oldLastX=chart.navigator.xAxis.max;
 				
-				console.log ('Start UpdateSelector ' + new Date (oldLastX) + ' - ' + (new Date (oldExtremes.dataMax)));
-				updateSelector(navigator.historyOID,navigator.instance,navigator.multiplicator,oldLastX+1,function (){
-					if (chart.navigator.series[0].data.length>0 && chart.navigator.series[0].data[chart.navigator.series[0].data.length-1].x > oldLastX && oldExtremes.max > oldLastX-(10*60*1000)){
-						var newMaxX=chart.navigator.xAxis.max;
+				var oldLastMaxX;
+				if (chart.navigator.series[0].points && chart.navigator.series[0].points.length>0){
+					oldLastMaxX=chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x;
+				} else {
+					oldLastMaxX=chart.navigator.xAxis.max;
+
+				}
+				
+				
+				console.log ('V2 Start UpdateSelector Axis max: ' + (new Date (oldLastX)) + ' - Data Max: ' + (new Date (oldLastMaxX)));
+				updateSelector(navigator.historyOID,navigator.instance,navigator.multiplicator,oldLastMaxX+1,function (){
+					console.log ('V2 test extremes of Selector oldExtremes max: ' + (new Date (oldExtremes.max)) + ' oldmax: ' + (new Date (oldLastMaxX)) );					
+					if (chart.navigator.series[0].points.length>0 && chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x > oldLastX && oldExtremes.max > oldLastMaxX-(10*60*1000)){
+						var newMaxX=chart.navigator.series[0].points[chart.navigator.series[0].points.length-1].x;
+						console.log ('V2 set extremes of Selector to ' + (new Date (oldExtremes.min+newMaxX-oldExtremes.max)) + ' ' + (new Date (newMaxX) ));
 						chart.xAxis[0].setExtremes(oldExtremes.min+newMaxX-oldExtremes.max,newMaxX, true, true, { trigger: 'zoom' });
 					}
 						
@@ -2112,11 +2134,12 @@ function handler(event) {
 							chart.xAxis[0].setExtremes(Math.max (absMin ,xMin - zoomRatio * (xMax-xMin)), Math.min (absMax, xMax + zoomRatio * (xMax-xMin)), true, true, { trigger: 'zoom' });
 						}
 
-						
+						console.log ('V2 chart restart update interval');						
 						fbobj.updateIntervalHandler[widgetID]=window.setInterval(function () {
 						   updateSeriesData ();
 						}, 30000);
 						
+						console.log ('V2 chart data.autoreload:' + data.autoreload);
 						if (data.autoreload>0){
 							fbobj.updateIntervalHandler[widgetID]=window.setInterval(function () {
 								reloadSeriesData ();
@@ -2476,6 +2499,11 @@ function handler(event) {
 				
 			};
 
+			$(window).resize(function() {
+			  console.log( "Resize Chart " + divId + widgetID);
+			  chart.setSize(null, null);
+			});
+
 
 			window.setTimeout(function (){				
 				var startDate=new Date ();
@@ -2645,7 +2673,7 @@ function handler(event) {
 						stepForward ();
 					},parseInt(data.playspeed  ||  3) *1000);
 					
-					
+					chart.setSize(null, null);					
 				});
 				
 				
@@ -2804,6 +2832,135 @@ function handler(event) {
 				$div.data('bound', [data.timestampid + '.val']);
 				$div.data('bindHandler', onChangeValue);
 			}			
+		},
+		
+		createGaugeWidget: function (widgetID, view, data, style) {
+			var divId = 'chart_placeholder';
+			var chart = null;
+
+			var fbobj=this;
+			console.log(' vis-photovoltaikcharts: Create Gauge Widget');
+		
+			var $div = $('#' + widgetID);
+			// if nothing found => wait
+			if (!$div.length) {
+				return setTimeout(function () {
+					fbobj.createGaugeWidget(widgetID, view, data, style);
+				}, 100);
+			}
+			console.log ("Initialize Chart Widget #" + widgetID );
+			var systemLang = 'en';
+			if (typeof sysLang !== 'undefined') {
+				systemLang = sysLang || 'en';
+			}
+						
+			
+			var gaugeOptions = {
+				chart: {
+					type: 'solidgauge'
+				},
+
+				title: undefined,
+
+				pane: {
+					center: [(data.panCenterX?data.panCenterX + '%':'50%'), (data.panCenterY?data.panCenterY + '%':'50%')],
+					size: '160%',
+					startAngle: (data.startAngel?parseInt (data.startAngel):-90),
+					endAngle: (data.stopAngel?parseInt (data.stopAngel):90),
+					background: {
+						backgroundColor: { linearGradient: { x1: 0, y1: 0, x2: 0, y2: 1 }, stops: [[0, data.paneBackgroundColor1 || '#ffffff'], [1, data.paneBackgroundColor2 || '#eee']] },
+						borderColor: data.borderColor,
+						innerRadius: (data.innerRadius?data.innerRadius + '%':'60%'),
+						outerRadius: (data.outerRadius?data.outerRadius + '%':'100%'),
+						shape: data.shape || 'arc'
+					}
+				},
+
+				exporting: {
+					enabled: false
+				},
+
+				tooltip: {
+					enabled: false
+				},
+
+				// the value axis
+				yAxis: {
+					stops: [],
+					lineWidth: data.lineWidth,
+					tickWidth: data.tickWidth,
+					minorTickInterval: parseInt (data.minorTickInterval),
+					tickAmount: parseInt (data.tickAmount),
+					title: {
+						y: parseInt (data.titlePositionY) || -70
+					},
+					labels: {
+						y: parseInt (data.labelsPositionY) || 16
+					},
+					min: parseInt(data.min) || 0,
+					max: parseInt(data.max) || 100,
+					title: {
+						text: data.title
+					}
+				},
+				plotOptions: {
+					solidgauge: {
+						dataLabels: {
+							y: parseInt (data.dataLabelsPositionY) || 5,
+							borderWidth: parseInt (data.dataLabelsBorderWidth) || 0,
+							useHTML: true
+						}
+					}
+				},
+				
+
+				credits: {
+					enabled: false
+				},
+
+				series: [{
+					name: data.title,
+					data: [vis.states[data.oid + '.val']* (parseFloat (data.multiplicator) || 1)],
+					dataLabels: {
+						format:
+							'<div style="text-align:center">' +
+							'<span style="font-size:' + (data.fontsizevalue || '25px') +'">{y}</span><br/>' +
+							(data.valuesuffix?'<span style="font-size:' + (data.fontsizesuffix || '12px') +';opacity:0.4">'+data.valuesuffix+'</span>' :'')+
+							'</div>'
+					},
+					tooltip: {
+						valueSuffix: data.valuesuffix
+					}
+				}]
+				
+			};
+			
+            if (data.stopCount>0){
+				var stop;
+				for (var i=0;i<data.stopCount;i++){
+					if (data['stopposition'+(i+1)]){
+						stop=[data['stopposition'+(i+1)]/100,data['stopcolor'+(i+1)]];
+						gaugeOptions.yAxis.stops.push(stop);
+					}
+				}
+			}
+			var chart = Highcharts.chart(divId + widgetID, gaugeOptions);
+				
+
+			
+			function onChangeSeries (e, newVal, oldVal) {
+				if (!chart || newVal==oldVal) {
+					return;
+				}
+				chart.series[0].points[0].update(newVal * (parseFloat (data.multiplicator) || 1));
+			}
+					
+			if (data.oid!=undefined) {
+				console.log ('register on changes for ' + data.oid);
+				vis.states.bind(data.oid + '.val', onChangeSeries);
+				$div.data('bound', [data.oid + '.val']);
+				$div.data('bindHandler', onChangeSeries);
+			}						
 		}
 
 	};

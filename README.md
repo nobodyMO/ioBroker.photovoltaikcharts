@@ -106,6 +106,11 @@ The input fields do not all have format checks. Numbers should be entered with a
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+### **WORK IN PROGRESS**
+- Fix of update mechanism of timeseries2
+- Add Gauge diagram type
+- Module updates
+
 ### 1.0.9 (2022-02-24)
 
 - Fix column width, dynamic update
